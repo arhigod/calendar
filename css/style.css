@@ -1,0 +1,87 @@
+th {
+	text-align: center;
+}
+
+.wrapper {
+	padding: 10px 3%;
+}
+
+.app {
+    height: 620px;
+    flex-direction: column;
+    display: flex;
+}
+
+.app tbody {
+    flex-direction: column;
+    display: flex;
+    height: 100%;
+}
+
+.row,
+.slds-text-title--caps {
+    width: 100%;
+    flex-basis: 1%;
+    display: flex;
+    flex-grow: 1;
+}
+
+.box {
+    display: inline-block;
+    flex-grow: 1;
+    width: 1%;
+    padding: 8px !important;
+    border-right: 1px solid #d8dde6;
+    cursor: default;
+}
+
+.box:first-child {
+    border-left: 1px solid #d8dde6;
+}
+
+.box .eventName {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    margin: 10px 0;
+}
+
+.box .eventName:hover {
+    cursor: pointer;
+    box-shadow: 0 0 3px 0 #d8dde6;
+    color: #4d95ff;
+}
+
+.day {
+	position: absolute;
+	top: 5px;
+	right: 8px;
+}
+
+.modalBody p {
+	white-space: initial;
+}
+
+.speakers {
+	display: flex;
+}
+
+.speaker {
+	display: inline-block;
+	flex-grow: 1;
+	text-align: center;
+	width: 1%;
+}
+
+.speaker img {
+	display: block;
+	height: 100px;
+	margin: 0 auto;
+}
+
+.speaker span {
+	display: block;
+	text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
