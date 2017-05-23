@@ -262,11 +262,11 @@ var Box = function (_React$Component4) {
                     _react2.default.createElement(
                         'span',
                         null,
-                        this.props.day + this.props.week * 7
+                        this.props.date.getDate()
                     )
                 ),
                 this.props.events.map(function (e, i) {
-                    return +e.start.substr(0, 4) == +_this8.props.year && +e.start.substr(5, 2) == +_this8.props.month && +e.start.substr(8, 2) == _this8.props.week * 7 + _this8.props.day && _react2.default.createElement(Event, { trainers: _this8.props.trainers, event: e, key: i });
+                    return e.start.substr(0, 10) == _this8.props.date.toISOString().substr(0, 10) && _react2.default.createElement(Event, { trainers: _this8.props.trainers, event: e, key: i });
                 })
             );
         }
@@ -293,7 +293,9 @@ var Row = function (_React$Component5) {
                 _reactLightningDesignSystem.TableRow,
                 { className: 'row' },
                 [].concat(_toConsumableArray(Array(7))).map(function (e, i) {
-                    return _react2.default.createElement(Box, { key: i, trainers: _this10.props.trainers, events: _this10.props.events, year: _this10.props.year, month: _this10.props.month, week: _this10.props.week, day: i + 1 });
+                    var x = new Date(_this10.props.date);
+                    x.setDate(x.getDate() + i);
+                    return _react2.default.createElement(Box, { key: i, trainers: _this10.props.trainers, date: x, events: _this10.props.events });
                 })
             );
         }
@@ -305,13 +307,44 @@ var Row = function (_React$Component5) {
 var App = function (_React$Component6) {
     _inherits(App, _React$Component6);
 
-    function App() {
+    function App(props) {
         _classCallCheck(this, App);
 
-        return _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).apply(this, arguments));
+        var _this11 = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
+
+        _this11.curentDate = new Date();
+        _this11.date = new Date();
+        _this11.date.setDate(1);
+        while (_this11.date.getDay() > 0) {
+            _this11.date.setDate(_this11.date.getDate() - 1);
+        }
+        _this11.state = {
+            date: _this11.date
+        };
+        _this11.dateChange = _this11.dateChange.bind(_this11);
+        return _this11;
     }
 
     _createClass(App, [{
+        key: 'shouldComponentUpdate',
+        value: function shouldComponentUpdate(nextProps, nextState) {
+            console.log('App should update', nextState.date.toISOString().substr(0, 10) != this.state.date.toISOString().substr(0, 10));
+            return nextState.date.toISOString().substr(0, 10) != this.state.date.toISOString().substr(0, 10);
+        }
+    }, {
+        key: 'dateChange',
+        value: function dateChange(date) {
+            this.curentDate = new Date(date);
+            this.date = new Date(date);
+            this.date.setDate(1);
+            while (this.date.getDay() > 0) {
+                this.date.setDate(this.date.getDate() - 1);
+            }
+            this.setState({
+                date: this.date
+            });
+        }
+    }, {
         key: 'render',
         value: function render() {
             var _this12 = this;
@@ -319,6 +352,13 @@ var App = function (_React$Component6) {
             return _react2.default.createElement(
                 'div',
                 { className: 'wrapper' },
+                _react2.default.createElement(
+                    'div',
+                    { className: 'dateInput' },
+                    _react2.default.createElement(_reactLightningDesignSystem.DateInput, { label: 'Date Input', defaultValue: new Date().toISOString(), dateFormat: 'DD/MM/YYYY', onValueChange: function onValueChange(x) {
+                            return _this12.dateChange(x);
+                        } })
+                ),
                 _react2.default.createElement(
                     _reactLightningDesignSystem.Table,
                     { bordered: true, className: 'app' },
@@ -328,7 +368,7 @@ var App = function (_React$Component6) {
                         _react2.default.createElement(
                             _reactLightningDesignSystem.TableRow,
                             { className: 'row' },
-                            ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(function (e, i) {
+                            ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map(function (e, i) {
                                 return _react2.default.createElement(
                                     _reactLightningDesignSystem.TableHeaderColumn,
                                     { className: 'box', key: i },
@@ -341,7 +381,9 @@ var App = function (_React$Component6) {
                         _reactLightningDesignSystem.TableBody,
                         null,
                         [].concat(_toConsumableArray(Array(5))).map(function (e, i) {
-                            return _react2.default.createElement(Row, { key: i, trainers: _this12.props.trainers, events: _this12.props.events, year: _this12.props.year, month: _this12.props.month, week: i });
+                            var x = new Date(_this12.state.date);
+                            x.setDate(x.getDate() + 7 * i);
+                            return _react2.default.createElement(Row, { key: i, date: x, trainers: _this12.props.trainers, events: _this12.props.events });
                         })
                     )
                 )
@@ -366,7 +408,7 @@ var rend = function rend(events, trainers) {
     (0, _reactDom.render)(_react2.default.createElement(
         'div',
         null,
-        _react2.default.createElement(App, { trainers: trainers, events: events, year: '2017', month: '01' })
+        _react2.default.createElement(App, { trainers: trainers, events: events })
     ), document.querySelector('#root'));
 };
 

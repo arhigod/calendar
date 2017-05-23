@@ -6,6 +6,12 @@ th {
 	padding: 10px 3%;
 }
 
+.dateInput {
+    max-width: 282px;
+    text-align: center;
+    margin: 0 auto;
+}
+
 .app {
     height: 620px;
     flex-direction: column;
@@ -84,4 +90,11 @@ th {
 	text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+}
+
+.slds-table--bordered:not(.slds-no-row-hover) tbody tr:hover > td:not(.slds-is-selected) {
+    box-shadow: none;
+}
+.slds-table:not(.slds-no-row-hover) tbody tr:hover > td {
+    background-color: inherit;
 }
