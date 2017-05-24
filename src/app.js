@@ -16,9 +16,21 @@ class MyModalBody extends React.Component {
                             )
                     }
                 </div>
-                <p>
-                    {this.props.event.description}
-                </p>
+                <div className="description">
+                    <p>
+                        {this.props.event.description}
+                    </p>
+                </div>
+                <div className="resources">
+                    {
+                        this.props.event.resources.map((res, i) => 
+                                <div key={i} className="resource">
+                                    <a href={res.resource} target="_blank">{res.type}</a>
+                                    <p>{res.description}</p>
+                                </div>
+                            )
+                    }
+                </div>
             </div>
         )
     }
@@ -41,38 +53,10 @@ class MyModal extends React.Component {
 }
 
 class Event extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            showComponent: false,
-        };
-        this.handleClick = this.handleClick.bind(this);
-        this.closeClick = this.closeClick.bind(this);
-    }
-
-    handleClick(e) {
-        if (!this.state.showComponent)
-            this.setState({
-                showComponent: true,
-            });
-        if (e.target.classList.contains('slds-modal__container') || e.target.classList.contains('slds-modal')) this.closeClick();
-    }
-
-    closeClick() {
-        this.setState({
-            showComponent: false,
-        });
-    }
-
     render() {
         return (
-            <div data-id={this.props.event.id} onClick={(e) => this.handleClick(e)} >
+            <div className="eventLine" data-id={this.props.event.id} onClick={(e) => this.props.modalFunc(e,this.props.event)} >
                 <p className="eventName">{this.props.event.type} - {this.props.event.title}</p>
-            {
-                this.state.showComponent ?
-                    <MyModal closef={() => this.closeClick()} trainers={this.props.trainers} event={this.props.event} /> :
-                    null
-            }
             </div>
         )
     }
@@ -90,7 +74,7 @@ class Box extends React.Component {
                 {
                     this.props.events.map((e,i) => 
                         (e.start.substr(0,10) == this.props.date.toISOString().substr(0,10)) &&
-                            <Event trainers={this.props.trainers} event={e} key={i} />                      
+                            <Event trainers={this.props.trainers} event={e} key={i} modalFunc={this.props.modalFunc} />                      
                     )
                 }
             </TableRowColumn>
@@ -106,7 +90,7 @@ class Row extends React.Component {
                 [...Array(7)].map((e,i)=> {
                     let x = new Date(this.props.date);
                     x.setDate(x.getDate()+i);
-                    return <Box key={i} trainers={this.props.trainers} date={x} curentDate={this.props.curentDate} events={this.props.events} />
+                    return <Box key={i} trainers={this.props.trainers} date={x} curentDate={this.props.curentDate} events={this.props.events} modalFunc={this.props.modalFunc} />
                 })
             }
             </TableRow>
@@ -120,18 +104,22 @@ class App extends React.Component {
         this.state = {
             date: new Date(),
             curentDate: new Date(),
+            showModal: false,
         };
         this.state.date.setDate(1);
         while (this.state.date.getDay() > 0) {
             this.state.date.setDate(this.state.date.getDate() - 1);
         }
         this.dateChange = this.dateChange.bind(this);
+        this.handleClick = this.handleClick.bind(this);
+        this.closeClick = this.closeClick.bind(this);
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        console.log('App should update', nextState.curentDate.toISOString().substr(0, 10) != this.state.curentDate.toISOString().substr(0, 10));
-        return nextState.curentDate.toISOString().substr(0, 10) != this.state.curentDate.toISOString().substr(0, 10);
-    }
+    // shouldComponentUpdate(nextProps, nextState) {
+    //     console.log('App should update', nextState.curentDate.toISOString().substr(0, 10) != this.state.curentDate.toISOString().substr(0, 10));
+    //     //return nextState.curentDate.toISOString().substr(0, 10) != this.state.curentDate.toISOString().substr(0, 10);
+    //     return true;
+    // }
 
     dateChange(date) {
         let d = new Date(date);
@@ -145,13 +133,27 @@ class App extends React.Component {
         });
     }
 
+    handleClick(e, event) {
+        if (!this.state.showModal && event)
+            this.setState({
+                showModal: true,
+                event: event,
+            });
+        if (e.target.classList.contains('slds-modal__container') || e.target.classList.contains('slds-modal')) this.closeClick();
+    }
+
+    closeClick() {
+        this.setState({
+            showModal: false,
+        });
+    }
 
     render() {
         let c = (new Date(this.state.date));
         c.setDate(this.state.date.getDate()+7*5);
         c = c.getMonth() == this.state.curentDate.getMonth() ? 6 : 5;
         return (
-            <div className="wrapper">
+            <div className="wrapper" onClick={(e)=>this.handleClick(e)} >
                 <div className="dateInput">
                     <ButtonGroup>
                         <Button type="icon-border" icon="left" onClick={()=>{
@@ -185,12 +187,17 @@ class App extends React.Component {
                         [...Array(c)].map((e,i)=> {
                             let x = new Date(this.state.date);
                             x.setDate(x.getDate()+7*i);
-                            return <Row key={i} date={x} curentDate={this.state.curentDate} trainers={this.props.trainers} events={this.props.events} />;
+                            return <Row key={i} date={x} curentDate={this.state.curentDate} trainers={this.props.trainers} events={this.props.events} modalFunc={(e,ev)=>this.handleClick(e,ev)} />;
                             }
                         )
                     }
                     </TableBody>
                 </Table>
+                {
+                    this.state.showModal ?
+                    <MyModal closef={() => this.closeClick()} trainers={this.props.trainers} event={this.state.event} /> :
+                    null
+                }
             </div>
         )
     }

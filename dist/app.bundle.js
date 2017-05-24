@@ -131,9 +131,33 @@ var MyModalBody = function (_React$Component) {
                     })
                 ),
                 _react2.default.createElement(
-                    'p',
-                    null,
-                    this.props.event.description
+                    'div',
+                    { className: 'description' },
+                    _react2.default.createElement(
+                        'p',
+                        null,
+                        this.props.event.description
+                    )
+                ),
+                _react2.default.createElement(
+                    'div',
+                    { className: 'resources' },
+                    this.props.event.resources.map(function (res, i) {
+                        return _react2.default.createElement(
+                            'div',
+                            { key: i, className: 'resource' },
+                            _react2.default.createElement(
+                                'a',
+                                { href: res.resource, target: '_blank' },
+                                res.type
+                            ),
+                            _react2.default.createElement(
+                                'p',
+                                null,
+                                res.description
+                            )
+                        );
+                    })
                 )
             );
         }
@@ -182,43 +206,21 @@ var MyModal = function (_React$Component2) {
 var Event = function (_React$Component3) {
     _inherits(Event, _React$Component3);
 
-    function Event(props) {
+    function Event() {
         _classCallCheck(this, Event);
 
-        var _this5 = _possibleConstructorReturn(this, (Event.__proto__ || Object.getPrototypeOf(Event)).call(this, props));
-
-        _this5.state = {
-            showComponent: false
-        };
-        _this5.handleClick = _this5.handleClick.bind(_this5);
-        _this5.closeClick = _this5.closeClick.bind(_this5);
-        return _this5;
+        return _possibleConstructorReturn(this, (Event.__proto__ || Object.getPrototypeOf(Event)).apply(this, arguments));
     }
 
     _createClass(Event, [{
-        key: 'handleClick',
-        value: function handleClick(e) {
-            if (!this.state.showComponent) this.setState({
-                showComponent: true
-            });
-            if (e.target.classList.contains('slds-modal__container') || e.target.classList.contains('slds-modal')) this.closeClick();
-        }
-    }, {
-        key: 'closeClick',
-        value: function closeClick() {
-            this.setState({
-                showComponent: false
-            });
-        }
-    }, {
         key: 'render',
         value: function render() {
             var _this6 = this;
 
             return _react2.default.createElement(
                 'div',
-                { 'data-id': this.props.event.id, onClick: function onClick(e) {
-                        return _this6.handleClick(e);
+                { className: 'eventLine', 'data-id': this.props.event.id, onClick: function onClick(e) {
+                        return _this6.props.modalFunc(e, _this6.props.event);
                     } },
                 _react2.default.createElement(
                     'p',
@@ -226,10 +228,7 @@ var Event = function (_React$Component3) {
                     this.props.event.type,
                     ' - ',
                     this.props.event.title
-                ),
-                this.state.showComponent ? _react2.default.createElement(MyModal, { closef: function closef() {
-                        return _this6.closeClick();
-                    }, trainers: this.props.trainers, event: this.props.event }) : null
+                )
             );
         }
     }]);
@@ -266,7 +265,7 @@ var Box = function (_React$Component4) {
                     )
                 ),
                 this.props.events.map(function (e, i) {
-                    return e.start.substr(0, 10) == _this8.props.date.toISOString().substr(0, 10) && _react2.default.createElement(Event, { trainers: _this8.props.trainers, event: e, key: i });
+                    return e.start.substr(0, 10) == _this8.props.date.toISOString().substr(0, 10) && _react2.default.createElement(Event, { trainers: _this8.props.trainers, event: e, key: i, modalFunc: _this8.props.modalFunc });
                 })
             );
         }
@@ -295,7 +294,7 @@ var Row = function (_React$Component5) {
                 [].concat(_toConsumableArray(Array(7))).map(function (e, i) {
                     var x = new Date(_this10.props.date);
                     x.setDate(x.getDate() + i);
-                    return _react2.default.createElement(Box, { key: i, trainers: _this10.props.trainers, date: x, curentDate: _this10.props.curentDate, events: _this10.props.events });
+                    return _react2.default.createElement(Box, { key: i, trainers: _this10.props.trainers, date: x, curentDate: _this10.props.curentDate, events: _this10.props.events, modalFunc: _this10.props.modalFunc });
                 })
             );
         }
@@ -314,23 +313,26 @@ var App = function (_React$Component6) {
 
         _this11.state = {
             date: new Date(),
-            curentDate: new Date()
+            curentDate: new Date(),
+            showModal: false
         };
         _this11.state.date.setDate(1);
         while (_this11.state.date.getDay() > 0) {
             _this11.state.date.setDate(_this11.state.date.getDate() - 1);
         }
         _this11.dateChange = _this11.dateChange.bind(_this11);
+        _this11.handleClick = _this11.handleClick.bind(_this11);
+        _this11.closeClick = _this11.closeClick.bind(_this11);
         return _this11;
     }
 
+    // shouldComponentUpdate(nextProps, nextState) {
+    //     console.log('App should update', nextState.curentDate.toISOString().substr(0, 10) != this.state.curentDate.toISOString().substr(0, 10));
+    //     //return nextState.curentDate.toISOString().substr(0, 10) != this.state.curentDate.toISOString().substr(0, 10);
+    //     return true;
+    // }
+
     _createClass(App, [{
-        key: 'shouldComponentUpdate',
-        value: function shouldComponentUpdate(nextProps, nextState) {
-            console.log('App should update', nextState.curentDate.toISOString().substr(0, 10) != this.state.curentDate.toISOString().substr(0, 10));
-            return nextState.curentDate.toISOString().substr(0, 10) != this.state.curentDate.toISOString().substr(0, 10);
-        }
-    }, {
         key: 'dateChange',
         value: function dateChange(date) {
             var d = new Date(date);
@@ -344,6 +346,22 @@ var App = function (_React$Component6) {
             });
         }
     }, {
+        key: 'handleClick',
+        value: function handleClick(e, event) {
+            if (!this.state.showModal && event) this.setState({
+                showModal: true,
+                event: event
+            });
+            if (e.target.classList.contains('slds-modal__container') || e.target.classList.contains('slds-modal')) this.closeClick();
+        }
+    }, {
+        key: 'closeClick',
+        value: function closeClick() {
+            this.setState({
+                showModal: false
+            });
+        }
+    }, {
         key: 'render',
         value: function render() {
             var _this12 = this;
@@ -353,7 +371,9 @@ var App = function (_React$Component6) {
             c = c.getMonth() == this.state.curentDate.getMonth() ? 6 : 5;
             return _react2.default.createElement(
                 'div',
-                { className: 'wrapper' },
+                { className: 'wrapper', onClick: function onClick(e) {
+                        return _this12.handleClick(e);
+                    } },
                 _react2.default.createElement(
                     'div',
                     { className: 'dateInput' },
@@ -402,10 +422,15 @@ var App = function (_React$Component6) {
                         [].concat(_toConsumableArray(Array(c))).map(function (e, i) {
                             var x = new Date(_this12.state.date);
                             x.setDate(x.getDate() + 7 * i);
-                            return _react2.default.createElement(Row, { key: i, date: x, curentDate: _this12.state.curentDate, trainers: _this12.props.trainers, events: _this12.props.events });
+                            return _react2.default.createElement(Row, { key: i, date: x, curentDate: _this12.state.curentDate, trainers: _this12.props.trainers, events: _this12.props.events, modalFunc: function modalFunc(e, ev) {
+                                    return _this12.handleClick(e, ev);
+                                } });
                         })
                     )
-                )
+                ),
+                this.state.showModal ? _react2.default.createElement(MyModal, { closef: function closef() {
+                        return _this12.closeClick();
+                    }, trainers: this.props.trainers, event: this.state.event }) : null
             );
         }
     }]);

@@ -13,7 +13,7 @@ th {
 }
 
 .app {
-    height: 620px;
+    /*height: 620px;*/
     flex-direction: column;
     display: flex;
 }
@@ -27,9 +27,13 @@ th {
 .row,
 .slds-text-title--caps {
     width: 100%;
-    flex-basis: 1%;
+    /*flex-basis: 1%;*/
     display: flex;
-    flex-grow: 1;
+    /*flex-grow: 1;*/
+}
+
+.row {
+    min-height: 85px;
 }
 
 .box {
@@ -39,6 +43,7 @@ th {
     padding: 8px !important;
     border-right: 1px solid #d8dde6;
     cursor: default;
+    overflow: visible;
 }
 
 .box:first-child {
@@ -64,19 +69,23 @@ th {
 	right: 8px;
 }
 
+.modalBody {
+    padding: 10px;
+}
+
 .modalBody p {
 	white-space: initial;
 }
 
 .speakers {
-	display: flex;
+	text-align: center;
 }
 
 .speaker {
 	display: inline-block;
-	flex-grow: 1;
 	text-align: center;
-	width: 1%;
+	width: 100px;
+    margin: 3px;
 }
 
 .speaker img {
@@ -99,3 +108,36 @@ th {
 .curentDate {
     background-color: #ecf3ff;
 }
+
+.description {
+    margin: 5px;
+}
+
+.resource {
+    display: flex;
+    border-top: 1px solid #ccc;
+}
+
+.resource a {
+    flex-grow: 1;
+    flex-basis: 50px;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-right: 1px solid #ccc;
+    margin: 3px;
+}
+
+.resource p {
+    flex-grow: 10;
+    flex-basis: 1%;
+    margin: 3px;
+}
+
+/*.eventLine {
+    width: 1000px;
+    background-color: blue;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}*/
