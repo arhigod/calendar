@@ -92,9 +92,10 @@ th {
     overflow: hidden;
 }
 
-.slds-table--bordered:not(.slds-no-row-hover) tbody tr:hover > td:not(.slds-is-selected) {
-    box-shadow: none;
+.inactiveMonth {
+    background-color: #f4f6f9;
 }
-.slds-table:not(.slds-no-row-hover) tbody tr:hover > td {
-    background-color: inherit;
+
+.curentDate {
+    background-color: #ecf3ff;
 }

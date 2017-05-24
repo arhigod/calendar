@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { DateInput, Button, Table, TableHeader, TableRow, TableHeaderColumn, TableBody, TableRowColumn, Spinner, Modal, ModalHeader, ModalContent, ModalFooter } from 'react-lightning-design-system';
+import { ButtonGroup, util, DateInput, Button, Table, TableHeader, TableRow, TableHeaderColumn, TableBody, TableRowColumn, Spinner, Modal, ModalHeader, ModalContent, ModalFooter } from 'react-lightning-design-system';
 
 class MyModalBody extends React.Component {
     render() {
@@ -51,7 +51,6 @@ class Event extends React.Component {
     }
 
     handleClick(e) {
-        console.log(this.props.event.type);
         if (!this.state.showComponent)
             this.setState({
                 showComponent: true,
@@ -60,7 +59,6 @@ class Event extends React.Component {
     }
 
     closeClick() {
-        console.log("closeClick");
         this.setState({
             showComponent: false,
         });
@@ -82,8 +80,10 @@ class Event extends React.Component {
 
 class Box extends React.Component {
     render() {
+        let classes = this.props.date.getMonth()==this.props.curentDate.getMonth() ? "box" : "box inactiveMonth";
+        classes = this.props.curentDate.toISOString().substr(0,10)==this.props.date.toISOString().substr(0,10) ? "box curentDate" : classes;
         return (
-            <TableRowColumn className="box">
+            <TableRowColumn className={classes}>
                 <div className="day">
                     <span>{this.props.date.getDate()}</span>
                 </div>
@@ -106,7 +106,7 @@ class Row extends React.Component {
                 [...Array(7)].map((e,i)=> {
                     let x = new Date(this.props.date);
                     x.setDate(x.getDate()+i);
-                    return <Box key={i} trainers={this.props.trainers} date={x} events={this.props.events} />
+                    return <Box key={i} trainers={this.props.trainers} date={x} curentDate={this.props.curentDate} events={this.props.events} />
                 })
             }
             </TableRow>
@@ -117,43 +117,58 @@ class Row extends React.Component {
 class App extends React.Component {
     constructor(props) {
         super(props);
-        this.curentDate = new Date();
-        this.date = new Date();
-        this.date.setDate(1);
-        while (this.date.getDay() > 0) {
-            this.date.setDate(this.date.getDate() - 1);
-        }
         this.state = {
-            date: this.date,
+            date: new Date(),
+            curentDate: new Date(),
         };
+        this.state.date.setDate(1);
+        while (this.state.date.getDay() > 0) {
+            this.state.date.setDate(this.state.date.getDate() - 1);
+        }
         this.dateChange = this.dateChange.bind(this);
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-        console.log('App should update',nextState.date.toISOString().substr(0,10) != this.state.date.toISOString().substr(0,10));
-        return nextState.date.toISOString().substr(0,10) != this.state.date.toISOString().substr(0,10);
+        console.log('App should update', nextState.curentDate.toISOString().substr(0, 10) != this.state.curentDate.toISOString().substr(0, 10));
+        return nextState.curentDate.toISOString().substr(0, 10) != this.state.curentDate.toISOString().substr(0, 10);
     }
 
     dateChange(date) {
-        this.curentDate = new Date(date);
-        this.date = new Date(date);
-        this.date.setDate(1);
-        while (this.date.getDay() > 0) {
-            this.date.setDate(this.date.getDate() - 1);
+        let d = new Date(date);
+        d.setDate(1);
+        while (d.getDay() > 0) {
+            d.setDate(d.getDate() - 1);
         }
         this.setState({
-            date: this.date,
+            curentDate: new Date(date),
+            date: d,
         });
     }
 
 
     render() {
+        let c = (new Date(this.state.date));
+        c.setDate(this.state.date.getDate()+7*5);
+        c = c.getMonth() == this.state.curentDate.getMonth() ? 6 : 5;
         return (
             <div className="wrapper">
                 <div className="dateInput">
-                    <DateInput label="Date Input" defaultValue={(new Date()).toISOString()} dateFormat="DD/MM/YYYY" onValueChange={(x)=>this.dateChange(x)} />
+                    <ButtonGroup>
+                        <Button type="icon-border" icon="left" onClick={()=>{
+                            let d = new Date(this.state.curentDate);
+                            d.setDate(0);
+                            this.dateChange(d.setDate(1))}
+                        } />
+                        <Button type="icon-border" icon="home" onClick={()=>this.dateChange(new Date())}/>
+                        <Button type="icon-border" icon="right" onClick={()=>{
+                            let d = new Date(this.state.curentDate);
+                            d.setDate(32);
+                            return this.dateChange(d.setDate(1))}
+                        } />
+                    </ButtonGroup>
+                    <DateInput label="Date Input" value={this.state.curentDate.toISOString()} dateFormat="DD/MM/YYYY" onValueChange={(x)=>this.dateChange(x)} />
                 </div>
-                <Table bordered className="app">
+                <Table bordered noRowHover className="app">
                    <TableHeader>
                         <TableRow className="row">
                         {
@@ -167,10 +182,10 @@ class App extends React.Component {
                     </TableHeader>
                     <TableBody>
                     {
-                        [...Array(5)].map((e,i)=> {
+                        [...Array(c)].map((e,i)=> {
                             let x = new Date(this.state.date);
                             x.setDate(x.getDate()+7*i);
-                            return <Row key={i} date={x} trainers={this.props.trainers} events={this.props.events} />;
+                            return <Row key={i} date={x} curentDate={this.state.curentDate} trainers={this.props.trainers} events={this.props.events} />;
                             }
                         )
                     }
@@ -180,6 +195,8 @@ class App extends React.Component {
         )
     }
 }
+
+util.setAssetRoot('./salesforce-lightning-design-system/assets');
 
 render(
     <div>
@@ -204,11 +221,11 @@ let takeTrainers = function(events) {
         .then(response => response.json())
         .then(trainers => {
             rend(events, trainers);
-        }).catch(err => console.log(err));
+        });
 }
 
 fetch('http://128.199.53.150/events')
     .then(response => response.json())
     .then(events => {
         takeTrainers(events);
-    }).catch(err => console.log(err));
+    });

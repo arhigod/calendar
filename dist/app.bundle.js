@@ -198,7 +198,6 @@ var Event = function (_React$Component3) {
     _createClass(Event, [{
         key: 'handleClick',
         value: function handleClick(e) {
-            console.log(this.props.event.type);
             if (!this.state.showComponent) this.setState({
                 showComponent: true
             });
@@ -207,7 +206,6 @@ var Event = function (_React$Component3) {
     }, {
         key: 'closeClick',
         value: function closeClick() {
-            console.log("closeClick");
             this.setState({
                 showComponent: false
             });
@@ -253,9 +251,11 @@ var Box = function (_React$Component4) {
         value: function render() {
             var _this8 = this;
 
+            var classes = this.props.date.getMonth() == this.props.curentDate.getMonth() ? "box" : "box inactiveMonth";
+            classes = this.props.curentDate.toISOString().substr(0, 10) == this.props.date.toISOString().substr(0, 10) ? "box curentDate" : classes;
             return _react2.default.createElement(
                 _reactLightningDesignSystem.TableRowColumn,
-                { className: 'box' },
+                { className: classes },
                 _react2.default.createElement(
                     'div',
                     { className: 'day' },
@@ -295,7 +295,7 @@ var Row = function (_React$Component5) {
                 [].concat(_toConsumableArray(Array(7))).map(function (e, i) {
                     var x = new Date(_this10.props.date);
                     x.setDate(x.getDate() + i);
-                    return _react2.default.createElement(Box, { key: i, trainers: _this10.props.trainers, date: x, events: _this10.props.events });
+                    return _react2.default.createElement(Box, { key: i, trainers: _this10.props.trainers, date: x, curentDate: _this10.props.curentDate, events: _this10.props.events });
                 })
             );
         }
@@ -312,15 +312,14 @@ var App = function (_React$Component6) {
 
         var _this11 = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 
-        _this11.curentDate = new Date();
-        _this11.date = new Date();
-        _this11.date.setDate(1);
-        while (_this11.date.getDay() > 0) {
-            _this11.date.setDate(_this11.date.getDate() - 1);
-        }
         _this11.state = {
-            date: _this11.date
+            date: new Date(),
+            curentDate: new Date()
         };
+        _this11.state.date.setDate(1);
+        while (_this11.state.date.getDay() > 0) {
+            _this11.state.date.setDate(_this11.state.date.getDate() - 1);
+        }
         _this11.dateChange = _this11.dateChange.bind(_this11);
         return _this11;
     }
@@ -328,20 +327,20 @@ var App = function (_React$Component6) {
     _createClass(App, [{
         key: 'shouldComponentUpdate',
         value: function shouldComponentUpdate(nextProps, nextState) {
-            console.log('App should update', nextState.date.toISOString().substr(0, 10) != this.state.date.toISOString().substr(0, 10));
-            return nextState.date.toISOString().substr(0, 10) != this.state.date.toISOString().substr(0, 10);
+            console.log('App should update', nextState.curentDate.toISOString().substr(0, 10) != this.state.curentDate.toISOString().substr(0, 10));
+            return nextState.curentDate.toISOString().substr(0, 10) != this.state.curentDate.toISOString().substr(0, 10);
         }
     }, {
         key: 'dateChange',
         value: function dateChange(date) {
-            this.curentDate = new Date(date);
-            this.date = new Date(date);
-            this.date.setDate(1);
-            while (this.date.getDay() > 0) {
-                this.date.setDate(this.date.getDate() - 1);
+            var d = new Date(date);
+            d.setDate(1);
+            while (d.getDay() > 0) {
+                d.setDate(d.getDate() - 1);
             }
             this.setState({
-                date: this.date
+                curentDate: new Date(date),
+                date: d
             });
         }
     }, {
@@ -349,19 +348,39 @@ var App = function (_React$Component6) {
         value: function render() {
             var _this12 = this;
 
+            var c = new Date(this.state.date);
+            c.setDate(this.state.date.getDate() + 7 * 5);
+            c = c.getMonth() == this.state.curentDate.getMonth() ? 6 : 5;
             return _react2.default.createElement(
                 'div',
                 { className: 'wrapper' },
                 _react2.default.createElement(
                     'div',
                     { className: 'dateInput' },
-                    _react2.default.createElement(_reactLightningDesignSystem.DateInput, { label: 'Date Input', defaultValue: new Date().toISOString(), dateFormat: 'DD/MM/YYYY', onValueChange: function onValueChange(x) {
+                    _react2.default.createElement(
+                        _reactLightningDesignSystem.ButtonGroup,
+                        null,
+                        _react2.default.createElement(_reactLightningDesignSystem.Button, { type: 'icon-border', icon: 'left', onClick: function onClick() {
+                                var d = new Date(_this12.state.curentDate);
+                                d.setDate(0);
+                                _this12.dateChange(d.setDate(1));
+                            } }),
+                        _react2.default.createElement(_reactLightningDesignSystem.Button, { type: 'icon-border', icon: 'home', onClick: function onClick() {
+                                return _this12.dateChange(new Date());
+                            } }),
+                        _react2.default.createElement(_reactLightningDesignSystem.Button, { type: 'icon-border', icon: 'right', onClick: function onClick() {
+                                var d = new Date(_this12.state.curentDate);
+                                d.setDate(32);
+                                return _this12.dateChange(d.setDate(1));
+                            } })
+                    ),
+                    _react2.default.createElement(_reactLightningDesignSystem.DateInput, { label: 'Date Input', value: this.state.curentDate.toISOString(), dateFormat: 'DD/MM/YYYY', onValueChange: function onValueChange(x) {
                             return _this12.dateChange(x);
                         } })
                 ),
                 _react2.default.createElement(
                     _reactLightningDesignSystem.Table,
-                    { bordered: true, className: 'app' },
+                    { bordered: true, noRowHover: true, className: 'app' },
                     _react2.default.createElement(
                         _reactLightningDesignSystem.TableHeader,
                         null,
@@ -380,10 +399,10 @@ var App = function (_React$Component6) {
                     _react2.default.createElement(
                         _reactLightningDesignSystem.TableBody,
                         null,
-                        [].concat(_toConsumableArray(Array(5))).map(function (e, i) {
+                        [].concat(_toConsumableArray(Array(c))).map(function (e, i) {
                             var x = new Date(_this12.state.date);
                             x.setDate(x.getDate() + 7 * i);
-                            return _react2.default.createElement(Row, { key: i, date: x, trainers: _this12.props.trainers, events: _this12.props.events });
+                            return _react2.default.createElement(Row, { key: i, date: x, curentDate: _this12.state.curentDate, trainers: _this12.props.trainers, events: _this12.props.events });
                         })
                     )
                 )
@@ -393,6 +412,8 @@ var App = function (_React$Component6) {
 
     return App;
 }(_react2.default.Component);
+
+_reactLightningDesignSystem.util.setAssetRoot('./salesforce-lightning-design-system/assets');
 
 (0, _reactDom.render)(_react2.default.createElement(
     'div',
@@ -417,8 +438,6 @@ var takeTrainers = function takeTrainers(events) {
         return response.json();
     }).then(function (trainers) {
         rend(events, trainers);
-    }).catch(function (err) {
-        return console.log(err);
     });
 };
 
@@ -426,8 +445,6 @@ fetch('http://128.199.53.150/events').then(function (response) {
     return response.json();
 }).then(function (events) {
     takeTrainers(events);
-}).catch(function (err) {
-    return console.log(err);
 });
 
 /***/ }),

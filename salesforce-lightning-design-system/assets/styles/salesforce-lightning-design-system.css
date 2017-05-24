@@ -645,10 +645,6 @@ img {
  * @restrict div
  * @variant
  */
-.slds-button-group,
-.slds-button-group-list {
-  display: -ms-flexbox;
-  display: flex; }
 
 .slds-button-group .slds-button,
 .slds-button-group-list .slds-button {
@@ -4227,7 +4223,6 @@ a.slds-button--inverse:focus {
   color: #54698d;
   font-size: 0.75rem;
   line-height: 1.5;
-  margin-right: 0.75rem;
   margin-bottom: 0.25rem; }
 
 .slds-form-element__label:empty {
