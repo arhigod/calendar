@@ -10224,7 +10224,7 @@ a.slds-button--inverse:focus {
       justify-content: center;
   margin: 0 2rem;
   height: 100%;
-  padding: 3rem 0;
+  padding: 1rem 0;
   border-radius: 0.25rem; }
 
 @media (min-width: 48em) {
@@ -14305,6 +14305,7 @@ a.slds-button--inverse:focus {
   position: relative; }
 
 .slds-table th {
+  overflow: hidden;
   font-weight: 400; }
 
 .slds-table th:focus {

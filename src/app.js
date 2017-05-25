@@ -64,8 +64,8 @@ class Event extends React.Component {
 
 class Box extends React.Component {
     render() {
-        let classes = this.props.date.getMonth()==this.props.curentDate.getMonth() ? "box" : "box inactiveMonth";
-        classes = this.props.curentDate.toISOString().substr(0,10)==this.props.date.toISOString().substr(0,10) ? "box curentDate" : classes;
+        let classes = this.props.date.getMonth() == this.props.curentDate.getMonth() ? "box" : "box inactiveMonth";
+        classes = this.props.curentDate.toISOString().substr(0, 10) == this.props.date.toISOString().substr(0, 10) ? "box curentDate" : classes;
         return (
             <TableRowColumn className={classes}>
                 <div className="day">
@@ -150,12 +150,12 @@ class App extends React.Component {
 
     render() {
         let c = (new Date(this.state.date));
-        c.setDate(this.state.date.getDate()+7*5);
+        c.setDate(this.state.date.getDate() + 7 * 5);
         c = c.getMonth() == this.state.curentDate.getMonth() ? 6 : 5;
         return (
             <div className="wrapper" onClick={(e)=>this.handleClick(e)} >
                 <div className="dateInput">
-                    <ButtonGroup>
+                    <ButtonGroup className="buttons">
                         <Button type="icon-border" icon="left" onClick={()=>{
                             let d = new Date(this.state.curentDate);
                             d.setDate(0);
@@ -168,7 +168,7 @@ class App extends React.Component {
                             return this.dateChange(d.setDate(1))}
                         } />
                     </ButtonGroup>
-                    <DateInput label="Date Input" value={this.state.curentDate.toISOString()} dateFormat="DD/MM/YYYY" onValueChange={(x)=>this.dateChange(x)} />
+                    <DateInput value={this.state.curentDate.toISOString()} dateFormat="DD/MM/YYYY" onValueChange={(x)=>this.dateChange(x)} />
                 </div>
                 <Table bordered noRowHover className="app">
                    <TableHeader>
@@ -231,8 +231,15 @@ let takeTrainers = function(events) {
         });
 }
 
+let localData = function() {
+    console.log('ooops');
+    let events = require('./../events.json');
+    let trainers = require('./../trainers.json');
+    rend(events,trainers);
+}
+
 fetch('http://128.199.53.150/events')
     .then(response => response.json())
     .then(events => {
         takeTrainers(events);
-    });
+    }).catch((err) => localData());
