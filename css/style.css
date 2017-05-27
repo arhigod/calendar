@@ -58,18 +58,18 @@ th {
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-    margin: 10px 0;
+    color: #fff;
 }
 
 .box .eventName:hover {
     cursor: pointer;
     box-shadow: 0 0 3px 0 #d8dde6;
-    color: #4d95ff;
+    color: #11ffe0;
 }
 
 .day {
 	position: absolute;
-	top: 5px;
+	top: 1px;
 	right: 8px;
 }
 
@@ -138,10 +138,11 @@ th {
     margin: 3px;
 }
 
-/*.eventLine {
-    width: 1000px;
-    background-color: blue;
+.eventLine {
+    background-color: #3174ad;
     text-align: center;
     position: relative;
     z-index: 1;
-}*/
+    margin: 10px 0;
+    border-radius: 5px
+}

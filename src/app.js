@@ -55,7 +55,7 @@ class MyModal extends React.Component {
 class Event extends React.Component {
     render() {
         return (
-            <div className="eventLine" data-id={this.props.event.id} onClick={(e) => this.props.modalFunc(e,this.props.event)} >
+            <div className="eventLine" style={{width: this.props.width, marginTop: this.props.mt+'px'}} data-id={this.props.event.id} onClick={(e) => this.props.modalFunc(e,this.props.event)} >
                 <p className="eventName">{this.props.event.type} - {this.props.event.title}</p>
             </div>
         )
@@ -65,16 +65,34 @@ class Event extends React.Component {
 class Box extends React.Component {
     render() {
         let classes = this.props.date.getMonth() == this.props.curentDate.getMonth() ? "box" : "box inactiveMonth";
-        classes = this.props.curentDate.toISOString().substr(0, 10) == this.props.date.toISOString().substr(0, 10) ? "box curentDate" : classes;
+        classes = this.props.curentDate.toLString() == this.props.date.toLString() ? "box curentDate" : classes;
+        let line = -1;
+        for (let i = 0; i < this.props.lines.length; i++) {
+            this.props.lines[i]--;
+        }
         return (
             <TableRowColumn className={classes}>
                 <div className="day">
                     <span>{this.props.date.getDate()}</span>
                 </div>
                 {
-                    this.props.events.map((e,i) => 
-                        (e.start.substr(0,10) == this.props.date.toISOString().substr(0,10)) &&
-                            <Event trainers={this.props.trainers} event={e} key={i} modalFunc={this.props.modalFunc} />                      
+                    this.props.events.map((e,i) => {    
+                        if (e.multiStart.reduce((pv,cv) => pv || cv.toLString() == this.props.date.toLString(),false)) { 
+                            line++;
+                            let d = new Date(e.start); d.setMilliseconds(e.duration);
+                            let length = Math.min(Math.ceil((d-this.props.date)/86400000),7-this.props.date.getDay());
+                            let w = length*100+'%';
+                            w='calc('+w+' + '+(length-1)*17+'px)';
+                            let mt = 10;
+                            while(this.props.lines[line]>0) {
+                                line++;
+                                mt+=29;
+                            }                            
+                            this.props.lines[line] = Math.ceil((d-this.props.date)/86400000);            
+                            this.props.lines.map(x=>x>0 ? x-1 : 0);
+                            return <Event width={w} mt={mt} trainers={this.props.trainers} event={e} key={i} modalFunc={this.props.modalFunc} />   
+                        }
+                    }
                     )
                 }
             </TableRowColumn>
@@ -84,13 +102,14 @@ class Box extends React.Component {
 
 class Row extends React.Component {
     render() {
+        this.lines = Array.from({ length: 10 }).fill(0);
         return (
             <TableRow className="row">
             {
                 [...Array(7)].map((e,i)=> {
                     let x = new Date(this.props.date);
                     x.setDate(x.getDate()+i);
-                    return <Box key={i} trainers={this.props.trainers} date={x} curentDate={this.props.curentDate} events={this.props.events} modalFunc={this.props.modalFunc} />
+                    return <Box takeLine={this.takeLine} lines={this.lines} key={i} trainers={this.props.trainers} date={x} curentDate={this.props.curentDate} events={this.props.events} modalFunc={this.props.modalFunc} />
                 })
             }
             </TableRow>
@@ -106,7 +125,10 @@ class App extends React.Component {
             curentDate: new Date(),
             showModal: false,
         };
+        this.state.date.setHours(0, 0, 0, 0);
+        this.state.curentDate.setHours(0, 0, 0, 0);
         this.state.date.setDate(1);
+        this.state.date.setHours(0, 0, 0, 0);
         while (this.state.date.getDay() > 0) {
             this.state.date.setDate(this.state.date.getDate() - 1);
         }
@@ -115,37 +137,43 @@ class App extends React.Component {
         this.closeClick = this.closeClick.bind(this);
     }
 
-    // shouldComponentUpdate(nextProps, nextState) {
-    //     console.log('App should update', nextState.curentDate.toISOString().substr(0, 10) != this.state.curentDate.toISOString().substr(0, 10));
-    //     //return nextState.curentDate.toISOString().substr(0, 10) != this.state.curentDate.toISOString().substr(0, 10);
-    //     return true;
-    // }
-
     dateChange(date) {
         let d = new Date(date);
         d.setDate(1);
+        d.setHours(0, 0, 0, 0);
         while (d.getDay() > 0) {
             d.setDate(d.getDate() - 1);
         }
+        let dd = new Date(date);
+        dd.setHours(0, 0, 0, 0);
         this.setState({
-            curentDate: new Date(date),
+            curentDate: dd,
             date: d,
         });
     }
 
     handleClick(e, event) {
-        if (!this.state.showModal && event)
+        if (!this.state.showModal && event) {
             this.setState({
                 showModal: true,
                 event: event,
             });
-        if (e.target.classList.contains('slds-modal__container') || e.target.classList.contains('slds-modal')) this.closeClick();
+        }
+        if (e.target.classList.contains('slds-modal__container') || e.target.classList.contains('slds-modal')) {
+            this.closeClick();
+        }
     }
 
     closeClick() {
         this.setState({
             showModal: false,
         });
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        if (this.state.showModal != nextState.showModal) return true;
+        if (this.state.curentDate.toLString() == nextState.curentDate.toLString()) return false;
+        return true;
     }
 
     render() {
@@ -168,7 +196,7 @@ class App extends React.Component {
                             return this.dateChange(d.setDate(1))}
                         } />
                     </ButtonGroup>
-                    <DateInput value={this.state.curentDate.toISOString()} dateFormat="DD/MM/YYYY" onValueChange={(x)=>this.dateChange(x)} />
+                    <DateInput value={this.state.curentDate.toLString()} dateFormat="DD/MM/YYYY" onValueChange={(x)=>this.dateChange(x)} />
                 </div>
                 <Table bordered noRowHover className="app">
                    <TableHeader>
@@ -203,17 +231,6 @@ class App extends React.Component {
     }
 }
 
-util.setAssetRoot('./salesforce-lightning-design-system/assets');
-
-render(
-    <div>
-        <div style={{position: "absolute", top: "50%", left: "50%", width: "100px", height: "100px", transform:"translate(-50%,-50%)"}}>
-            <Spinner type="brand" size="large" />
-        </div>
-    </div>,
-    document.querySelector('#root')
-);
-
 let rend = function(events, trainers) {
     render(
         <div>
@@ -235,11 +252,48 @@ let localData = function() {
     console.log('ooops');
     let events = require('./../events.json');
     let trainers = require('./../trainers.json');
-    rend(events,trainers);
+    events.map(e => {
+        e.multiStart = [new Date(e.start)];
+        let d = new Date(e.start);
+        d.setMilliseconds(e.duration);
+        d.setDate(d.getDate() - d.getDay());
+        d.setHours(0, 0, 0, 0);
+        while (d > e.multiStart[0]) {
+            e.multiStart.push(new Date(d));
+            d.setDate(d.getDate() - 7);
+        }
+    })
+    rend(events, trainers);
+}
+
+util.setAssetRoot('./salesforce-lightning-design-system/assets');
+
+render(
+    <div>
+        <div style={{position: "absolute", top: "50%", left: "50%", width: "100px", height: "100px", transform:"translate(-50%,-50%)"}}>
+            <Spinner type="brand" size="large" />
+        </div>
+    </div>,
+    document.querySelector('#root')
+);
+
+Date.prototype.toLString = function() {
+    return `${this.getFullYear()}.${this.getMonth()+1}.${this.getDate()}`;
 }
 
 fetch('http://128.199.53.150/events')
     .then(response => response.json())
     .then(events => {
+        events.map(e => {
+            e.multiStart = [new Date(e.start)];
+            let d = new Date(e.start);
+            d.setMilliseconds(e.duration);
+            d.setDate(d.getDate() - d.getDay());
+            d.setHours(0, 0, 0, 0);
+            while (d > e.multiStart[0]) {
+                e.multiStart.push(new Date(d));
+                d.setDate(d.getDate() - 7);
+            }
+        })
         takeTrainers(events);
     }).catch((err) => localData());
