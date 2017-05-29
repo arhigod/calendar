@@ -55,7 +55,7 @@ class MyModal extends React.Component {
 class Event extends React.Component {
     render() {
         return (
-            <div className="eventLine" style={{width: this.props.width, marginTop: this.props.mt+'px'}} data-id={this.props.event.id} onClick={(e) => this.props.modalFunc(e,this.props.event)} >
+            <div className={"eventLine "+this.props.class} style={{width: this.props.width, marginTop: this.props.mt+'px'}} data-id={this.props.event.id} onClick={(e) => this.props.modalFunc(e,this.props.event)} >
                 <p className="eventName">{this.props.event.type} - {this.props.event.title}</p>
             </div>
         )
@@ -82,7 +82,18 @@ class Box extends React.Component {
                             let d = new Date(e.start); d.setMilliseconds(e.duration);
                             let length = Math.min(Math.ceil((d-this.props.date)/86400000),7-this.props.date.getDay());
                             let w = length*100+'%';
-                            w='calc('+w+' + '+(length-1)*17+'px)';
+                            let ww = (length-1)*17;
+                            let borderClass = '';
+                            if (this.props.date.toLString() != e.multiStart[0].toLString()) {
+                                borderClass+='left ';
+                                ww+=8;
+                            }
+                            if (this.props.date.toLString() != e.multiStart[e.multiStart.length-1].toLString()) {
+                                borderClass+='right';
+                                ww+=8;
+                            }
+
+                            w = 'calc('+w+' + '+ww+'px)';
                             let mt = 10;
                             while(this.props.lines[line]>0) {
                                 line++;
@@ -90,7 +101,7 @@ class Box extends React.Component {
                             }                            
                             this.props.lines[line] = Math.ceil((d-this.props.date)/86400000);            
                             this.props.lines.map(x=>x>0 ? x-1 : 0);
-                            return <Event width={w} mt={mt} trainers={this.props.trainers} event={e} key={i} modalFunc={this.props.modalFunc} />   
+                            return <Event class={borderClass} width={w} mt={mt} trainers={this.props.trainers} event={e} key={i} modalFunc={this.props.modalFunc} />   
                         }
                     }
                     )

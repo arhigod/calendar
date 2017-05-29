@@ -63,7 +63,6 @@ th {
 
 .box .eventName:hover {
     cursor: pointer;
-    box-shadow: 0 0 3px 0 #d8dde6;
     color: #11ffe0;
 }
 
@@ -144,5 +143,16 @@ th {
     position: relative;
     z-index: 1;
     margin: 10px 0;
-    border-radius: 5px
+    border-radius: 5px;
+}
+
+.eventLine.right {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.eventLine.left {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    margin-left: -8px;
 }

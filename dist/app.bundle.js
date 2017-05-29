@@ -37781,7 +37781,7 @@ var Event = function (_React$Component3) {
 
             return _react2.default.createElement(
                 'div',
-                { className: 'eventLine', style: { width: this.props.width, marginTop: this.props.mt + 'px' }, 'data-id': this.props.event.id, onClick: function onClick(e) {
+                { className: "eventLine " + this.props.class, style: { width: this.props.width, marginTop: this.props.mt + 'px' }, 'data-id': this.props.event.id, onClick: function onClick(e) {
                         return _this6.props.modalFunc(e, _this6.props.event);
                     } },
                 _react2.default.createElement(
@@ -37838,7 +37838,18 @@ var Box = function (_React$Component4) {
                         var d = new Date(e.start);d.setMilliseconds(e.duration);
                         var length = Math.min(Math.ceil((d - _this8.props.date) / 86400000), 7 - _this8.props.date.getDay());
                         var w = length * 100 + '%';
-                        w = 'calc(' + w + ' + ' + (length - 1) * 17 + 'px)';
+                        var ww = (length - 1) * 17;
+                        var borderClass = '';
+                        if (_this8.props.date.toLString() != e.multiStart[0].toLString()) {
+                            borderClass += 'left ';
+                            ww += 8;
+                        }
+                        if (_this8.props.date.toLString() != e.multiStart[e.multiStart.length - 1].toLString()) {
+                            borderClass += 'right';
+                            ww += 8;
+                        }
+
+                        w = 'calc(' + w + ' + ' + ww + 'px)';
                         var mt = 10;
                         while (_this8.props.lines[line] > 0) {
                             line++;
@@ -37848,7 +37859,7 @@ var Box = function (_React$Component4) {
                         _this8.props.lines.map(function (x) {
                             return x > 0 ? x - 1 : 0;
                         });
-                        return _react2.default.createElement(Event, { width: w, mt: mt, trainers: _this8.props.trainers, event: e, key: i, modalFunc: _this8.props.modalFunc });
+                        return _react2.default.createElement(Event, { 'class': borderClass, width: w, mt: mt, trainers: _this8.props.trainers, event: e, key: i, modalFunc: _this8.props.modalFunc });
                     }
                 })
             );
