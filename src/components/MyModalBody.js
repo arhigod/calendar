@@ -11,7 +11,7 @@ export default class MyModalBody extends React.Component {
         return (
             <div className="modalBody">
             	<div className="date">
-            		<Icon icon="standard:event" size="small" />
+            		<Icon icon="utility:dayview" size="small" />
 	            	<p>
 	            		{`${start} - ${finish}`}
 	            	</p>

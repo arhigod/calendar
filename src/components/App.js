@@ -60,7 +60,7 @@ export default class App extends React.Component {
 
     shouldComponentUpdate(nextProps, nextState) {
         if (this.state.showModal != nextState.showModal) return true;
-        if (this.state.curentDate.toLString() == nextState.curentDate.toLString()) return false;
+        if (this.state.curentDate.toLocString() == nextState.curentDate.toLocString()) return false;
         return true;
     }
 
@@ -84,7 +84,7 @@ export default class App extends React.Component {
                             return this.dateChange(d.setDate(1))}
                         } />
                     </ButtonGroup>
-                    <DateInput value={this.state.curentDate.toLString()} dateFormat="DD/MM/YYYY" onValueChange={(x)=>this.dateChange(x)} />
+                    <DateInput value={this.state.curentDate.toLocString()} dateFormat="DD/MM/YYYY" onValueChange={(x)=>this.dateChange(x)} />
                 </div>
                 <Table bordered noRowHover className="app">
                    <TableHeader>

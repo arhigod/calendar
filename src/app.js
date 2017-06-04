@@ -50,7 +50,7 @@ render(
     document.querySelector('#root')
 );
 
-Date.prototype.toLString = function() {
+Date.prototype.toLocString = function() {
     return `${this.getFullYear()}.${this.getMonth()+1}.${this.getDate()}`;
 }
 

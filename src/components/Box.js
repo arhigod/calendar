@@ -7,7 +7,7 @@ import Event from './Event';
 export default class Box extends React.Component {
     render() {
         let classes = this.props.date.getMonth() == this.props.curentDate.getMonth() ? "box" : "box inactiveMonth";
-        classes = this.props.curentDate.toLString() == this.props.date.toLString() ? "box curentDate" : classes;
+        classes = this.props.curentDate.toLocString() == this.props.date.toLocString() ? "box curentDate" : classes;
         let line = -1;
         for (let i = 0; i < this.props.lines.length; i++) {
             this.props.lines[i]--;
@@ -19,18 +19,18 @@ export default class Box extends React.Component {
                 </div>
                 {
                     this.props.events.map((e,i) => {    
-                        if (e.multiStart.reduce((pv,cv) => pv || cv.toLString() == this.props.date.toLString(),false)) { 
+                        if (e.multiStart.reduce((pv,cv) => pv || cv.toLocString() == this.props.date.toLocString(),false)) { 
                             line++;
                             let d = new Date(e.start); d.setMilliseconds(e.duration);
                             let length = Math.min(Math.ceil((d-this.props.date)/86400000),7-this.props.date.getDay());
                             let w = length*100+'%';
                             let ww = (length-1)*17;
                             let borderClass = '';
-                            if (this.props.date.toLString() != e.multiStart[0].toLString()) {
+                            if (this.props.date.toLocString() != e.multiStart[0].toLocString()) {
                                 borderClass+='left ';
                                 ww+=8;
                             }
-                            if (this.props.date.toLString() != e.multiStart[e.multiStart.length-1].toLString()) {
+                            if (this.props.date.toLocString() != e.multiStart[e.multiStart.length-1].toLocString()) {
                                 borderClass+='right';
                                 ww+=8;
                             }
