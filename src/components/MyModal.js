@@ -7,7 +7,7 @@ import MyModalBody from './MyModalBody';
 export default class MyModal extends React.Component {
     render() {
         return (
-            <Modal opened size="large" >
+            <Modal className="modal" opened size="large" >
                 <ModalHeader title={this.props.event.type + ' - ' + this.props.event.title} closeButton={false} />
                 <ModalContent>
                     <MyModalBody trainers={this.props.trainers} event={this.props.event} />

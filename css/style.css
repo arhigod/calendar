@@ -1,15 +1,15 @@
 th {
-	text-align: center;
+    text-align: center;
 }
 
 .wrapper {
-	padding: 10px 3%;
+    padding: 10px 3%;
 }
 
 .dateInput {
     max-width: 282px;
-    text-align: center;
     margin: 15px auto;
+    text-align: center;
 }
 
 .buttons {
@@ -17,20 +17,20 @@ th {
 }
 
 .app {
-    flex-direction: column;
     display: flex;
+    flex-direction: column;
 }
 
 .app tbody {
-    flex-direction: column;
     display: flex;
+    flex-direction: column;
     height: 100%;
 }
 
 .row,
 .slds-text-title--caps {
-    width: 100%;
     display: flex;
+    width: 100%;
 }
 
 .row {
@@ -39,12 +39,12 @@ th {
 
 .box {
     display: inline-block;
-    flex-grow: 1;
+    overflow: visible;
     width: 1%;
     padding: 8px !important;
-    border-right: 1px solid #d8dde6;
     cursor: default;
-    overflow: visible;
+    border-right: 1px solid #d8dde6;
+    flex-grow: 1;
 }
 
 .box:first-child {
@@ -52,9 +52,9 @@ th {
 }
 
 .box .eventName {
-    text-overflow: ellipsis;
-    white-space: nowrap;
     overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     color: #fff;
 }
 
@@ -64,41 +64,42 @@ th {
 }
 
 .day {
-	position: absolute;
-	top: 1px;
-	right: 8px;
+    position: absolute;
+    top: 1px;
+    right: 8px;
 }
 
 .modalBody {
-    padding: 10px;
+    padding: 10px 30px;
 }
 
 .modalBody p {
-	white-space: initial;
+    white-space: initial;
 }
 
 .speakers {
-	text-align: center;
+    text-align: center;
 }
 
 .speaker {
-	display: inline-block;
-	text-align: center;
-	width: 100px;
+    display: inline-block;
+    width: 100px;
     margin: 3px;
+    text-align: center;
 }
 
 .speaker img {
-	display: block;
-	height: 100px;
-	margin: 0 auto;
+    display: block;
+    height: 100px;
+    margin: 0 auto;
+    border-radius: 30%;
 }
 
 .speaker span {
-	display: block;
-	text-overflow: ellipsis;
-    white-space: nowrap;
+    display: block;
     overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .inactiveMonth {
@@ -111,6 +112,7 @@ th {
 
 .description {
     margin: 5px;
+    text-align: justify;
 }
 
 .resource {
@@ -119,28 +121,29 @@ th {
 }
 
 .resource a {
-    flex-grow: 1;
-    flex-basis: 50px;
-    text-align: center;
     overflow: hidden;
+    margin: 3px;
+    text-align: center;
     text-overflow: ellipsis;
     border-right: 1px solid #ccc;
-    margin: 3px;
+    flex-grow: 1;
+    flex-basis: 50px;
 }
 
 .resource p {
+    margin: 3px;
+    text-align: justify;
     flex-grow: 10;
     flex-basis: 1%;
-    margin: 3px;
 }
 
 .eventLine {
-    background-color: #3174ad;
-    text-align: center;
     position: relative;
     z-index: 1;
     margin: 10px 0;
+    text-align: center;
     border-radius: 5px;
+    background-color: #3174ad;
 }
 
 .eventLine.right {
@@ -149,14 +152,14 @@ th {
 }
 
 .eventLine.left {
+    margin-left: -8px;
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
-    margin-left: -8px;
 }
 
 .date {
-    text-align: center;
     margin: 8px 0;
+    text-align: center;
 }
 
 .date p {
@@ -166,11 +169,27 @@ th {
 
 .map {
     width: 80%;
-    margin: 10px auto;
     height: 400px;
+    margin: 10px auto;
 }
 
 .map iframe {
     width: 100%;
     height: 100%;
+}
+
+@keyframes up {
+    0% {
+        top: 50%;
+    }
+    100% {
+        top: 0;
+    }
+}
+
+.slds-modal__container {
+    top: 50%;
+    transition-duration: 1s;
+    transform: translate3d(0, 0, 0);
+    animation: up .5s forwards;
 }

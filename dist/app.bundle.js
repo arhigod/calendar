@@ -38124,7 +38124,7 @@ var MyModal = function (_React$Component) {
 
             return _react2.default.createElement(
                 _reactLightningDesignSystem.Modal,
-                { opened: true, size: 'large' },
+                { className: 'modal', opened: true, size: 'large' },
                 _react2.default.createElement(_reactLightningDesignSystem.ModalHeader, { title: this.props.event.type + ' - ' + this.props.event.title, closeButton: false }),
                 _react2.default.createElement(
                     _reactLightningDesignSystem.ModalContent,
