@@ -191,5 +191,11 @@ th {
     top: 50%;
     transition-duration: 1s;
     transform: translate3d(0, 0, 0);
-    animation: up .5s forwards;
+    animation: up 1.5s forwards;
+}
+
+.slds-form-element.react-slds-dropdown-form-element {
+    border: 1px solid #d8dde6;
+    border-radius: 0.25rem;
+    box-shadow: 0 0 3px #d8dde6;
 }

@@ -3,11 +3,24 @@ import { render } from 'react-dom';
 import { Icon } from 'react-lightning-design-system';
 
 export default class MyModalBody extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			renderMap: false,
+		}
+		this.renderMap = this.renderMap.bind(this);
+	}
+	renderMap() {
+		this.setState({
+			renderMap: true,
+		})
+	}
     render() {
     	let start = (new Date(this.props.event.start)).toLocaleString();
     	let finish = new Date(this.props.event.start);
     	finish.setMilliseconds(this.props.event.duration);
     	finish = finish.toLocaleString();
+    	setTimeout(this.renderMap, 1600);
         return (
             <div className="modalBody">
             	<div className="date">
@@ -41,7 +54,11 @@ export default class MyModalBody extends React.Component {
                             )
                     }
                 </div>
-                <div className="map" dangerouslySetInnerHTML={{__html: '<iframe frameborder="0" src="https://www.google.com/maps/embed/v1/place?q=vulісa Akadеmіka Kuprеvіča 1, Building 5, Minsk&key=AIzaSyAF-vbk6kyPKb3CplU49bTq2r26vvQK5BM" allowfullscreen></iframe>'}}/>
+                {
+                	this.state.renderMap ?
+                	<div className="map" dangerouslySetInnerHTML={{__html: '<iframe frameborder="0" src="https://www.google.com/maps/embed/v1/place?q=vulісa Akadеmіka Kuprеvіča 1, Building 5, Minsk&key=AIzaSyAF-vbk6kyPKb3CplU49bTq2r26vvQK5BM" allowfullscreen></iframe>'}}/> :
+            		<div className="map" />
+            	}
             </div>
         )
     }

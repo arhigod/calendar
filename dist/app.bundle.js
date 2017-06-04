@@ -35352,7 +35352,7 @@ var App = function (_React$Component) {
                                 return _this2.dateChange(d.setDate(1));
                             } })
                     ),
-                    _react2.default.createElement(_reactLightningDesignSystem.DateInput, { value: this.state.curentDate.toLocString(), dateFormat: 'DD/MM/YYYY', onValueChange: function onValueChange(x) {
+                    _react2.default.createElement(_reactLightningDesignSystem.DateInput, { readOnly: true, className: 'dateLabel', value: this.state.curentDate.toLocString(), dateFormat: 'DD/MM/YYYY', onValueChange: function onValueChange(x) {
                             return _this2.dateChange(x);
                         } })
                 ),
@@ -38179,13 +38179,26 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var MyModalBody = function (_React$Component) {
     _inherits(MyModalBody, _React$Component);
 
-    function MyModalBody() {
+    function MyModalBody(props) {
         _classCallCheck(this, MyModalBody);
 
-        return _possibleConstructorReturn(this, (MyModalBody.__proto__ || Object.getPrototypeOf(MyModalBody)).apply(this, arguments));
+        var _this = _possibleConstructorReturn(this, (MyModalBody.__proto__ || Object.getPrototypeOf(MyModalBody)).call(this, props));
+
+        _this.state = {
+            renderMap: false
+        };
+        _this.renderMap = _this.renderMap.bind(_this);
+        return _this;
     }
 
     _createClass(MyModalBody, [{
+        key: 'renderMap',
+        value: function renderMap() {
+            this.setState({
+                renderMap: true
+            });
+        }
+    }, {
         key: 'render',
         value: function render() {
             var _this2 = this;
@@ -38194,6 +38207,7 @@ var MyModalBody = function (_React$Component) {
             var finish = new Date(this.props.event.start);
             finish.setMilliseconds(this.props.event.duration);
             finish = finish.toLocaleString();
+            setTimeout(this.renderMap, 1600);
             return _react2.default.createElement(
                 'div',
                 { className: 'modalBody' },
@@ -38256,7 +38270,7 @@ var MyModalBody = function (_React$Component) {
                         );
                     })
                 ),
-                _react2.default.createElement('div', { className: 'map', dangerouslySetInnerHTML: { __html: '<iframe frameborder="0" src="https://www.google.com/maps/embed/v1/place?q=vulісa Akadеmіka Kuprеvіča 1, Building 5, Minsk&key=AIzaSyAF-vbk6kyPKb3CplU49bTq2r26vvQK5BM" allowfullscreen></iframe>' } })
+                this.state.renderMap ? _react2.default.createElement('div', { className: 'map', dangerouslySetInnerHTML: { __html: '<iframe frameborder="0" src="https://www.google.com/maps/embed/v1/place?q=vulісa Akadеmіka Kuprеvіča 1, Building 5, Minsk&key=AIzaSyAF-vbk6kyPKb3CplU49bTq2r26vvQK5BM" allowfullscreen></iframe>' } }) : _react2.default.createElement('div', { className: 'map' })
             );
         }
     }]);

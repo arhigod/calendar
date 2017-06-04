@@ -84,7 +84,7 @@ export default class App extends React.Component {
                             return this.dateChange(d.setDate(1))}
                         } />
                     </ButtonGroup>
-                    <DateInput value={this.state.curentDate.toLocString()} dateFormat="DD/MM/YYYY" onValueChange={(x)=>this.dateChange(x)} />
+                    <DateInput readOnly className="dateLabel" value={this.state.curentDate.toLocString()} dateFormat="DD/MM/YYYY" onValueChange={(x)=>this.dateChange(x)} />
                 </div>
                 <Table bordered noRowHover className="app">
                    <TableHeader>
