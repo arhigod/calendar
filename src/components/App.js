@@ -32,28 +32,38 @@ export default class App extends React.Component {
 
     modalSwipe() {
         let mouseDown = false;
-        let startSwipe = 0;
-        let startSwipeSlidesPos = 0;
+        let startSwipeX = 0;
+        let startSwipeY = 0;
+        let startSwipeModalPos = 0;
+        let modalMove = false;
         document.addEventListener('touchstart', e => {
             if (this.state.showModal) {
                 document.querySelector('.slds-modal__container').style['transition-duration'] = '0s';
                 mouseDown = true;
-                startSwipe = e.changedTouches[0].pageX;
-                startSwipeSlidesPos = parseInt(document.querySelector('.slds-modal__container').style.transform.substr(11)) || 0;
+                modalMove = false;
+                startSwipeX = e.changedTouches[0].pageX;
+                startSwipeY = e.changedTouches[0].pageY;
+                startSwipeModalPos = parseInt(document.querySelector('.slds-modal__container').style.transform.substr(11)) || 0;
             }
         });
         document.addEventListener('touchmove', e => {
-            if (mouseDown) {
-                document.querySelector('.slds-modal__container').style.transform = `translateX(${startSwipeSlidesPos - startSwipe + e.changedTouches[0].pageX}px)`;
+            console.log(mouseDown && Math.abs(e.changedTouches[0].pageY-startSwipeY) < 50 && (modalMove || Math.abs(startSwipeModalPos - startSwipeX + e.changedTouches[0].pageX) > 50),Math.abs(e.changedTouches[0].pageY-startSwipeY),Math.abs(startSwipeModalPos - startSwipeX + e.changedTouches[0].pageX))
+            if (mouseDown && Math.abs(e.changedTouches[0].pageY-startSwipeY) < 50 && (modalMove || Math.abs(startSwipeModalPos - startSwipeX + e.changedTouches[0].pageX) > 50)) {
+                modalMove = true;
+                document.querySelector('.slds-modal__container').style.transform = `translateX(${startSwipeModalPos - startSwipeX + e.changedTouches[0].pageX}px)`;
+            }
+            if (Math.abs(e.changedTouches[0].pageY-startSwipeY) >= 50) {
+                modalMove = false;
+                document.querySelector('.slds-modal__container').style.transform = `translateX(0px)`;
             }
         });
         document.addEventListener('touchend', e => {
-            if (mouseDown) {
+            if (mouseDown && modalMove) {
                 document.querySelector('.slds-modal__container').style['transition-duration'] = '1s';
                 mouseDown = false;
-                if (startSwipe - e.changedTouches[0].pageX < -125) {
+                if (startSwipeX - e.changedTouches[0].pageX < -125) {
                     this.closeClick();
-                } else if (startSwipe - e.changedTouches[0].pageX > 125) {
+                } else if (startSwipeX - e.changedTouches[0].pageX > 125) {
                     this.closeClick();
                 } else {
                     document.querySelector('.slds-modal__container').style.transform = `translateX(0px)`;
