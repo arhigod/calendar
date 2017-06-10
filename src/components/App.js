@@ -51,9 +51,9 @@ export default class App extends React.Component {
             if (mouseDown) {
                 document.querySelector('.slds-modal__container').style['transition-duration'] = '1s';
                 mouseDown = false;
-                if (startSwipe - e.changedTouches[0].pageX < -75) {
+                if (startSwipe - e.changedTouches[0].pageX < -125) {
                     this.closeClick();
-                } else if (startSwipe - e.changedTouches[0].pageX > 75) {
+                } else if (startSwipe - e.changedTouches[0].pageX > 125) {
                     this.closeClick();
                 } else {
                     document.querySelector('.slds-modal__container').style.transform = `translateX(0px)`;
