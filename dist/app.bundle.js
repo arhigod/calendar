@@ -35273,6 +35273,8 @@ var App = function (_React$Component) {
         while (_this.state.date.getDay() > 0) {
             _this.state.date.setDate(_this.state.date.getDate() - 1);
         }
+        _this.modalSwipe();
+
         _this.dateChange = _this.dateChange.bind(_this);
         _this.handleClick = _this.handleClick.bind(_this);
         _this.closeClick = _this.closeClick.bind(_this);
@@ -35281,6 +35283,41 @@ var App = function (_React$Component) {
     }
 
     _createClass(App, [{
+        key: 'modalSwipe',
+        value: function modalSwipe() {
+            var _this2 = this;
+
+            var mouseDown = false;
+            var startSwipe = 0;
+            var startSwipeSlidesPos = 0;
+            document.addEventListener('touchstart', function (e) {
+                if (_this2.state.showModal) {
+                    document.querySelector('.slds-modal__container').style['transition-duration'] = '0s';
+                    mouseDown = true;
+                    startSwipe = e.changedTouches[0].pageX;
+                    startSwipeSlidesPos = parseInt(document.querySelector('.slds-modal__container').style.transform.substr(11)) || 0;
+                }
+            });
+            document.addEventListener('touchmove', function (e) {
+                if (mouseDown) {
+                    document.querySelector('.slds-modal__container').style.transform = 'translateX(' + (startSwipeSlidesPos - startSwipe + e.changedTouches[0].pageX) + 'px)';
+                }
+            });
+            document.addEventListener('touchend', function (e) {
+                if (mouseDown) {
+                    document.querySelector('.slds-modal__container').style['transition-duration'] = '1s';
+                    mouseDown = false;
+                    if (startSwipe - e.changedTouches[0].pageX < -75) {
+                        _this2.closeClick();
+                    } else if (startSwipe - e.changedTouches[0].pageX > 75) {
+                        _this2.closeClick();
+                    } else {
+                        document.querySelector('.slds-modal__container').style.transform = 'translateX(0px)';
+                    }
+                };
+            });
+        }
+    }, {
         key: 'dateChange',
         value: function dateChange(date) {
             var d = new Date(date);
@@ -35305,7 +35342,7 @@ var App = function (_React$Component) {
                     event: event
                 });
             }
-            if (e.target.classList.contains('slds-modal__container') || e.target.classList.contains('slds-modal')) {
+            if (e.target.classList.contains('modal')) {
                 this.closeClick();
             }
         }
@@ -35333,12 +35370,12 @@ var App = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
-            var _this2 = this;
+            var _this3 = this;
 
             return _react2.default.createElement(
                 'div',
                 { className: 'wrapper', onClick: function onClick(e) {
-                        return _this2.handleClick(e);
+                        return _this3.handleClick(e);
                     } },
                 _react2.default.createElement(
                     'div',
@@ -35349,14 +35386,14 @@ var App = function (_React$Component) {
                         _react2.default.createElement(
                             _reactLightningDesignSystem.Button,
                             { type: 'neutral', className: this.state.view == "month" ? "btn-active" : "", onClick: function onClick() {
-                                    return _this2.changeView('month');
+                                    return _this3.changeView('month');
                                 } },
                             'month'
                         ),
                         _react2.default.createElement(
                             _reactLightningDesignSystem.Button,
                             { type: 'neutral', className: this.state.view == "week" ? "btn-active" : "", onClick: function onClick() {
-                                    return _this2.changeView('week');
+                                    return _this3.changeView('week');
                                 } },
                             'week'
                         )
@@ -35365,38 +35402,38 @@ var App = function (_React$Component) {
                         _reactLightningDesignSystem.ButtonGroup,
                         { className: 'buttons' },
                         _react2.default.createElement(_reactLightningDesignSystem.Button, { type: 'icon-border', icon: 'left', onClick: function onClick() {
-                                var d = new Date(_this2.state.curentDate);
-                                if (_this2.state.view == "month") {
+                                var d = new Date(_this3.state.curentDate);
+                                if (_this3.state.view == "month") {
                                     d.setMonth(d.getMonth() - 1);
                                 } else {
                                     d.setDate(d.getDate() - 7);
                                 }
-                                _this2.dateChange(d);
+                                _this3.dateChange(d);
                             } }),
                         _react2.default.createElement(_reactLightningDesignSystem.Button, { type: 'icon-border', icon: 'home', onClick: function onClick() {
-                                return _this2.dateChange(new Date());
+                                return _this3.dateChange(new Date());
                             } }),
                         _react2.default.createElement(_reactLightningDesignSystem.Button, { type: 'icon-border', icon: 'right', onClick: function onClick() {
-                                var d = new Date(_this2.state.curentDate);
-                                if (_this2.state.view == "month") {
+                                var d = new Date(_this3.state.curentDate);
+                                if (_this3.state.view == "month") {
                                     d.setMonth(d.getMonth() + 1);
                                 } else {
                                     d.setDate(d.getDate() + 7);
                                 }
-                                _this2.dateChange(d);
+                                _this3.dateChange(d);
                             } })
                     ),
                     _react2.default.createElement(_reactLightningDesignSystem.DateInput, { readOnly: true, className: 'dateLabel', value: this.state.curentDate.toLocString('string'), dateFormat: 'DD/MM/YYYY', onValueChange: function onValueChange(x) {
-                            return _this2.dateChange(x);
+                            return _this3.dateChange(x);
                         } })
                 ),
                 this.state.view == 'month' ? _react2.default.createElement(_TableMonth2.default, { trainers: this.props.trainers, events: this.props.events, date: this.state.date, curentDate: this.state.curentDate, handleClick: function handleClick(e, ev) {
-                        return _this2.handleClick(e, ev);
+                        return _this3.handleClick(e, ev);
                     } }) : _react2.default.createElement(_TableWeek2.default, { trainers: this.props.trainers, events: this.props.events, date: this.state.date, curentDate: this.state.curentDate, handleClick: function handleClick(e, ev) {
-                        return _this2.handleClick(e, ev);
+                        return _this3.handleClick(e, ev);
                     } }),
                 this.state.showModal ? _react2.default.createElement(_MyModal2.default, { closef: function closef() {
-                        return _this2.closeClick();
+                        return _this3.closeClick();
                     }, trainers: this.props.trainers, event: this.state.event }) : null
             );
         }

@@ -22,10 +22,44 @@ export default class App extends React.Component {
         while (this.state.date.getDay() > 0) {
             this.state.date.setDate(this.state.date.getDate() - 1);
         }
+        this.modalSwipe();
+
         this.dateChange = this.dateChange.bind(this);
         this.handleClick = this.handleClick.bind(this);
         this.closeClick = this.closeClick.bind(this);
         this.changeView = this.changeView.bind(this);
+    }
+
+    modalSwipe() {
+        let mouseDown = false;
+        let startSwipe = 0;
+        let startSwipeSlidesPos = 0;
+        document.addEventListener('touchstart', e => {
+            if (this.state.showModal) {
+                document.querySelector('.slds-modal__container').style['transition-duration'] = '0s';
+                mouseDown = true;
+                startSwipe = e.changedTouches[0].pageX;
+                startSwipeSlidesPos = parseInt(document.querySelector('.slds-modal__container').style.transform.substr(11)) || 0;
+            }
+        });
+        document.addEventListener('touchmove', e => {
+            if (mouseDown) {
+                document.querySelector('.slds-modal__container').style.transform = `translateX(${startSwipeSlidesPos - startSwipe + e.changedTouches[0].pageX}px)`;
+            }
+        });
+        document.addEventListener('touchend', e => {
+            if (mouseDown) {
+                document.querySelector('.slds-modal__container').style['transition-duration'] = '1s';
+                mouseDown = false;
+                if (startSwipe - e.changedTouches[0].pageX < -75) {
+                    this.closeClick();
+                } else if (startSwipe - e.changedTouches[0].pageX > 75) {
+                    this.closeClick();
+                } else {
+                    document.querySelector('.slds-modal__container').style.transform = `translateX(0px)`;
+                }
+            };
+        });
     }
 
     dateChange(date) {
@@ -50,7 +84,7 @@ export default class App extends React.Component {
                 event: event,
             });
         }
-        if (e.target.classList.contains('slds-modal__container') || e.target.classList.contains('slds-modal')) {
+        if (e.target.classList.contains('modal')) {
             this.closeClick();
         }
     }

@@ -73,3 +73,4 @@ fetch('http://128.199.53.150/events').catch((err) => localData())
         })
         takeTrainers(events);
     }).catch((err) => console.log(err));
+

@@ -199,8 +199,6 @@ tbody .box {
 
 .slds-modal__container {
     top: 50%;
-    transition-duration: 1s;
-    transform: translate3d(0, 0, 0);
     animation: up 1.5s forwards;
 }
 
