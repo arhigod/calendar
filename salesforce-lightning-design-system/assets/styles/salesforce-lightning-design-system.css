@@ -756,8 +756,7 @@ img {
   color: #005fb2; }
 
 .slds-button:focus {
-  outline: 0;
-  box-shadow: 0 0 3px #0070D2; }
+  outline: 0; }
 
 .slds-button:active {
   color: #00396b; }
@@ -819,15 +818,6 @@ a.slds-button--inverse:focus {
   vertical-align: middle;
   border: 1px solid #d8dde6;
   background-color: white; }
-
-.slds-button_neutral:hover, .slds-button_neutral:focus,
-.slds-button--neutral:hover,
-.slds-button--neutral:focus {
-  background-color: #f4f6f9; }
-
-.slds-button_neutral:active,
-.slds-button--neutral:active {
-  background-color: #eef1f6; }
 
 .slds-button_neutral[disabled],
 .slds-button--neutral[disabled] {

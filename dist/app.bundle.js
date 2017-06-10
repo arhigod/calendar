@@ -35232,17 +35232,19 @@ var _reactDom = __webpack_require__(28);
 
 var _reactLightningDesignSystem = __webpack_require__(42);
 
-var _Row = __webpack_require__(284);
-
-var _Row2 = _interopRequireDefault(_Row);
-
 var _MyModal = __webpack_require__(282);
 
 var _MyModal2 = _interopRequireDefault(_MyModal);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _TableWeek = __webpack_require__(467);
 
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+var _TableWeek2 = _interopRequireDefault(_TableWeek);
+
+var _TableMonth = __webpack_require__(466);
+
+var _TableMonth2 = _interopRequireDefault(_TableMonth);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -35261,7 +35263,8 @@ var App = function (_React$Component) {
         _this.state = {
             date: new Date(),
             curentDate: new Date(),
-            showModal: false
+            showModal: false,
+            view: 'month'
         };
         _this.state.date.setHours(0, 0, 0, 0);
         _this.state.curentDate.setHours(0, 0, 0, 0);
@@ -35273,6 +35276,7 @@ var App = function (_React$Component) {
         _this.dateChange = _this.dateChange.bind(_this);
         _this.handleClick = _this.handleClick.bind(_this);
         _this.closeClick = _this.closeClick.bind(_this);
+        _this.changeView = _this.changeView.bind(_this);
         return _this;
     }
 
@@ -35280,7 +35284,7 @@ var App = function (_React$Component) {
         key: 'dateChange',
         value: function dateChange(date) {
             var d = new Date(date);
-            d.setDate(1);
+            if (this.state.view == "month") d.setDate(1);
             d.setHours(0, 0, 0, 0);
             while (d.getDay() > 0) {
                 d.setDate(d.getDate() - 1);
@@ -35313,10 +35317,17 @@ var App = function (_React$Component) {
             });
         }
     }, {
+        key: 'changeView',
+        value: function changeView(view) {
+            this.state.view = view;
+            this.dateChange(this.state.curentDate);
+        }
+    }, {
         key: 'shouldComponentUpdate',
         value: function shouldComponentUpdate(nextProps, nextState) {
             if (this.state.showModal != nextState.showModal) return true;
-            if (this.state.curentDate.toLocString() == nextState.curentDate.toLocString()) return false;
+            if (this.state.view != nextState.view) return true;
+            //if (this.state.curentDate.toLocString() == nextState.curentDate.toLocString()) return false;
             return true;
         }
     }, {
@@ -35324,9 +35335,6 @@ var App = function (_React$Component) {
         value: function render() {
             var _this2 = this;
 
-            var c = new Date(this.state.date);
-            c.setDate(this.state.date.getDate() + 7 * 5);
-            c = c.getMonth() == this.state.curentDate.getMonth() ? 6 : 5;
             return _react2.default.createElement(
                 'div',
                 { className: 'wrapper', onClick: function onClick(e) {
@@ -35338,54 +35346,55 @@ var App = function (_React$Component) {
                     _react2.default.createElement(
                         _reactLightningDesignSystem.ButtonGroup,
                         { className: 'buttons' },
+                        _react2.default.createElement(
+                            _reactLightningDesignSystem.Button,
+                            { type: 'neutral', className: this.state.view == "month" ? "btn-active" : "", onClick: function onClick() {
+                                    return _this2.changeView('month');
+                                } },
+                            'month'
+                        ),
+                        _react2.default.createElement(
+                            _reactLightningDesignSystem.Button,
+                            { type: 'neutral', className: this.state.view == "week" ? "btn-active" : "", onClick: function onClick() {
+                                    return _this2.changeView('week');
+                                } },
+                            'week'
+                        )
+                    ),
+                    _react2.default.createElement(
+                        _reactLightningDesignSystem.ButtonGroup,
+                        { className: 'buttons' },
                         _react2.default.createElement(_reactLightningDesignSystem.Button, { type: 'icon-border', icon: 'left', onClick: function onClick() {
                                 var d = new Date(_this2.state.curentDate);
-                                d.setDate(0);
-                                _this2.dateChange(d.setDate(1));
+                                if (_this2.state.view == "month") {
+                                    d.setMonth(d.getMonth() - 1);
+                                } else {
+                                    d.setDate(d.getDate() - 7);
+                                }
+                                _this2.dateChange(d);
                             } }),
                         _react2.default.createElement(_reactLightningDesignSystem.Button, { type: 'icon-border', icon: 'home', onClick: function onClick() {
                                 return _this2.dateChange(new Date());
                             } }),
                         _react2.default.createElement(_reactLightningDesignSystem.Button, { type: 'icon-border', icon: 'right', onClick: function onClick() {
                                 var d = new Date(_this2.state.curentDate);
-                                d.setDate(32);
-                                return _this2.dateChange(d.setDate(1));
+                                if (_this2.state.view == "month") {
+                                    d.setMonth(d.getMonth() + 1);
+                                } else {
+                                    d.setDate(d.getDate() + 7);
+                                }
+                                _this2.dateChange(d);
                             } })
                     ),
-                    _react2.default.createElement(_reactLightningDesignSystem.DateInput, { readOnly: true, className: 'dateLabel', value: this.state.curentDate.toLocString(), dateFormat: 'DD/MM/YYYY', onValueChange: function onValueChange(x) {
+                    _react2.default.createElement(_reactLightningDesignSystem.DateInput, { readOnly: true, className: 'dateLabel', value: this.state.curentDate.toLocString('string'), dateFormat: 'DD/MM/YYYY', onValueChange: function onValueChange(x) {
                             return _this2.dateChange(x);
                         } })
                 ),
-                _react2.default.createElement(
-                    _reactLightningDesignSystem.Table,
-                    { bordered: true, noRowHover: true, className: 'app' },
-                    _react2.default.createElement(
-                        _reactLightningDesignSystem.TableHeader,
-                        null,
-                        _react2.default.createElement(
-                            _reactLightningDesignSystem.TableRow,
-                            { className: 'row' },
-                            ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map(function (e, i) {
-                                return _react2.default.createElement(
-                                    _reactLightningDesignSystem.TableHeaderColumn,
-                                    { className: 'box', key: i },
-                                    e
-                                );
-                            })
-                        )
-                    ),
-                    _react2.default.createElement(
-                        _reactLightningDesignSystem.TableBody,
-                        null,
-                        [].concat(_toConsumableArray(Array(c))).map(function (e, i) {
-                            var x = new Date(_this2.state.date);
-                            x.setDate(x.getDate() + 7 * i);
-                            return _react2.default.createElement(_Row2.default, { key: i, date: x, curentDate: _this2.state.curentDate, trainers: _this2.props.trainers, events: _this2.props.events, clickFunction: function clickFunction(e, ev) {
-                                    return _this2.handleClick(e, ev);
-                                } });
-                        })
-                    )
-                ),
+                this.state.view == 'month' ? _react2.default.createElement(_TableMonth2.default, { trainers: this.props.trainers, events: this.props.events, date: this.state.date, curentDate: this.state.curentDate, handleClick: function handleClick(e, ev) {
+                        return _this2.handleClick(e, ev);
+                    } }) : _react2.default.createElement(_TableWeek2.default, { trainers: this.props.trainers, events: this.props.events, date: this.state.date, curentDate: this.state.curentDate, handleClick: function handleClick(e, ev) {
+                        return _this2.handleClick(e, ev);
+                    } }),
                 this.state.showModal ? _react2.default.createElement(_MyModal2.default, { closef: function closef() {
                         return _this2.closeClick();
                     }, trainers: this.props.trainers, event: this.state.event }) : null
@@ -37882,8 +37891,11 @@ _reactLightningDesignSystem.util.setAssetRoot('./salesforce-lightning-design-sys
     )
 ), document.querySelector('#root'));
 
-Date.prototype.toLocString = function () {
-    return this.getFullYear() + '.' + (this.getMonth() + 1) + '.' + this.getDate();
+Date.prototype.toLocString = function (type) {
+    var n = this.getFullYear() * 10000 + (this.getMonth() + 1) * 100 + this.getDate();
+    if (type == "beauty") return String(n).substr(6, 2) + '/' + String(n).substr(4, 2) + '/' + String(n).substr(0, 4);
+    if (type == "string") return String(n);
+    return n;
 };
 
 fetch('http://128.199.53.150/events').catch(function (err) {
@@ -37908,112 +37920,7 @@ fetch('http://128.199.53.150/events').catch(function (err) {
 });
 
 /***/ }),
-/* 280 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _react = __webpack_require__(2);
-
-var _react2 = _interopRequireDefault(_react);
-
-var _reactDom = __webpack_require__(28);
-
-var _reactLightningDesignSystem = __webpack_require__(42);
-
-var _Event = __webpack_require__(281);
-
-var _Event2 = _interopRequireDefault(_Event);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var Box = function (_React$Component) {
-    _inherits(Box, _React$Component);
-
-    function Box() {
-        _classCallCheck(this, Box);
-
-        return _possibleConstructorReturn(this, (Box.__proto__ || Object.getPrototypeOf(Box)).apply(this, arguments));
-    }
-
-    _createClass(Box, [{
-        key: 'render',
-        value: function render() {
-            var _this2 = this;
-
-            var classes = this.props.date.getMonth() == this.props.curentDate.getMonth() ? "box" : "box inactiveMonth";
-            classes = this.props.curentDate.toLocString() == this.props.date.toLocString() ? "box curentDate" : classes;
-            var line = -1;
-            for (var i = 0; i < this.props.lines.length; i++) {
-                this.props.lines[i]--;
-            }
-            return _react2.default.createElement(
-                _reactLightningDesignSystem.TableRowColumn,
-                { className: classes },
-                _react2.default.createElement(
-                    'div',
-                    { className: 'day' },
-                    _react2.default.createElement(
-                        'span',
-                        null,
-                        this.props.date.getDate()
-                    )
-                ),
-                this.props.events.map(function (e, i) {
-                    if (e.multiStart.reduce(function (pv, cv) {
-                        return pv || cv.toLocString() == _this2.props.date.toLocString();
-                    }, false)) {
-                        line++;
-                        var d = new Date(e.start);d.setMilliseconds(e.duration);
-                        var length = Math.min(Math.ceil((d - _this2.props.date) / 86400000), 7 - _this2.props.date.getDay());
-                        var w = length * 100 + '%';
-                        var ww = (length - 1) * 17;
-                        var borderClass = '';
-                        if (_this2.props.date.toLocString() != e.multiStart[0].toLocString()) {
-                            borderClass += 'left ';
-                            ww += 8;
-                        }
-                        if (_this2.props.date.toLocString() != e.multiStart[e.multiStart.length - 1].toLocString()) {
-                            borderClass += 'right';
-                            ww += 8;
-                        }
-
-                        w = 'calc(' + w + ' + ' + ww + 'px)';
-                        var mt = 10;
-                        while (_this2.props.lines[line] > 0) {
-                            line++;
-                            mt += 29;
-                        }
-                        _this2.props.lines[line] = Math.ceil((d - _this2.props.date) / 86400000);
-                        _this2.props.lines.map(function (x) {
-                            return x > 0 ? x - 1 : 0;
-                        });
-                        return _react2.default.createElement(_Event2.default, { 'class': borderClass, width: w, mt: mt + 'px', trainers: _this2.props.trainers, event: e, key: i, clickFunction: _this2.props.clickFunction });
-                    }
-                })
-            );
-        }
-    }]);
-
-    return Box;
-}(_react2.default.Component);
-
-exports.default = Box;
-
-/***/ }),
+/* 280 */,
 /* 281 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -38281,73 +38188,7 @@ var MyModalBody = function (_React$Component) {
 exports.default = MyModalBody;
 
 /***/ }),
-/* 284 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _react = __webpack_require__(2);
-
-var _react2 = _interopRequireDefault(_react);
-
-var _reactDom = __webpack_require__(28);
-
-var _reactLightningDesignSystem = __webpack_require__(42);
-
-var _Box = __webpack_require__(280);
-
-var _Box2 = _interopRequireDefault(_Box);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var Row = function (_React$Component) {
-    _inherits(Row, _React$Component);
-
-    function Row() {
-        _classCallCheck(this, Row);
-
-        return _possibleConstructorReturn(this, (Row.__proto__ || Object.getPrototypeOf(Row)).apply(this, arguments));
-    }
-
-    _createClass(Row, [{
-        key: 'render',
-        value: function render() {
-            var _this2 = this;
-
-            this.lines = Array.from({ length: 10 }).fill(0);
-            return _react2.default.createElement(
-                _reactLightningDesignSystem.TableRow,
-                { className: 'row' },
-                [].concat(_toConsumableArray(Array(7))).map(function (e, i) {
-                    var x = new Date(_this2.props.date);
-                    x.setDate(x.getDate() + i);
-                    return _react2.default.createElement(_Box2.default, { lines: _this2.lines, key: i, trainers: _this2.props.trainers, date: x, curentDate: _this2.props.curentDate, events: _this2.props.events, clickFunction: _this2.props.clickFunction });
-                })
-            );
-        }
-    }]);
-
-    return Row;
-}(_react2.default.Component);
-
-exports.default = Row;
-
-/***/ }),
+/* 284 */,
 /* 285 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -58406,6 +58247,494 @@ module.exports = function(module) {
 	return module;
 };
 
+
+/***/ }),
+/* 466 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(2);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactDom = __webpack_require__(28);
+
+var _reactLightningDesignSystem = __webpack_require__(42);
+
+var _RowMonth = __webpack_require__(471);
+
+var _RowMonth2 = _interopRequireDefault(_RowMonth);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var TableMonth = function (_React$Component) {
+    _inherits(TableMonth, _React$Component);
+
+    function TableMonth() {
+        _classCallCheck(this, TableMonth);
+
+        return _possibleConstructorReturn(this, (TableMonth.__proto__ || Object.getPrototypeOf(TableMonth)).apply(this, arguments));
+    }
+
+    _createClass(TableMonth, [{
+        key: 'render',
+        value: function render() {
+            var _this2 = this;
+
+            var c = new Date(this.props.date);
+            c.setDate(this.props.date.getDate() + 7 * 5);
+            c = c.getMonth() == this.props.curentDate.getMonth() ? 6 : 5;
+            return _react2.default.createElement(
+                _reactLightningDesignSystem.Table,
+                { bordered: true, noRowHover: true, className: 'app' },
+                _react2.default.createElement(
+                    _reactLightningDesignSystem.TableHeader,
+                    null,
+                    _react2.default.createElement(
+                        _reactLightningDesignSystem.TableRow,
+                        { className: 'row' },
+                        ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map(function (e, i) {
+                            return _react2.default.createElement(
+                                _reactLightningDesignSystem.TableHeaderColumn,
+                                { className: 'box', key: i },
+                                e
+                            );
+                        })
+                    )
+                ),
+                _react2.default.createElement(
+                    _reactLightningDesignSystem.TableBody,
+                    null,
+                    [].concat(_toConsumableArray(Array(c))).map(function (e, i) {
+                        var x = new Date(_this2.props.date);
+                        x.setDate(x.getDate() + 7 * i);
+                        return _react2.default.createElement(_RowMonth2.default, { key: i, date: x, curentDate: _this2.props.curentDate, trainers: _this2.props.trainers, events: _this2.props.events, clickFunction: _this2.props.handleClick });
+                    })
+                )
+            );
+        }
+    }]);
+
+    return TableMonth;
+}(_react2.default.Component);
+
+exports.default = TableMonth;
+
+/***/ }),
+/* 467 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(2);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactDom = __webpack_require__(28);
+
+var _reactLightningDesignSystem = __webpack_require__(42);
+
+var _RowWeek = __webpack_require__(468);
+
+var _RowWeek2 = _interopRequireDefault(_RowWeek);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var TableWeek = function (_React$Component) {
+    _inherits(TableWeek, _React$Component);
+
+    function TableWeek() {
+        _classCallCheck(this, TableWeek);
+
+        return _possibleConstructorReturn(this, (TableWeek.__proto__ || Object.getPrototypeOf(TableWeek)).apply(this, arguments));
+    }
+
+    _createClass(TableWeek, [{
+        key: 'render',
+        value: function render() {
+            var _this2 = this;
+
+            var dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            return _react2.default.createElement(
+                _reactLightningDesignSystem.Table,
+                { bordered: true, noRowHover: true, className: 'app' },
+                _react2.default.createElement(
+                    _reactLightningDesignSystem.TableBody,
+                    null,
+                    [].concat(_toConsumableArray(Array(14))).map(function (e, i) {
+                        var x = new Date(_this2.props.date);
+                        if (i % 2 == 0) {
+                            x.setDate(x.getDate() + i / 2);
+                            return _react2.default.createElement(_RowWeek2.default, { key: i, text: dayNames[i / 2], date: x, curentDate: _this2.props.curentDate });
+                        }
+                        x.setDate(x.getDate() + (i - 1) / 2);
+                        return _react2.default.createElement(_RowWeek2.default, { key: i, date: x, curentDate: _this2.props.curentDate, trainers: _this2.props.trainers, events: _this2.props.events, clickFunction: _this2.props.handleClick });
+                    })
+                )
+            );
+        }
+    }]);
+
+    return TableWeek;
+}(_react2.default.Component);
+
+exports.default = TableWeek;
+
+/***/ }),
+/* 468 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(2);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactDom = __webpack_require__(28);
+
+var _reactLightningDesignSystem = __webpack_require__(42);
+
+var _BoxWeek = __webpack_require__(469);
+
+var _BoxWeek2 = _interopRequireDefault(_BoxWeek);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var RowWeek = function (_React$Component) {
+    _inherits(RowWeek, _React$Component);
+
+    function RowWeek() {
+        _classCallCheck(this, RowWeek);
+
+        return _possibleConstructorReturn(this, (RowWeek.__proto__ || Object.getPrototypeOf(RowWeek)).apply(this, arguments));
+    }
+
+    _createClass(RowWeek, [{
+        key: 'render',
+        value: function render() {
+            return _react2.default.createElement(
+                _reactLightningDesignSystem.TableRow,
+                { className: 'row' },
+                this.props.text ? _react2.default.createElement(_BoxWeek2.default, { text: this.props.text, date: this.props.date, curentDate: this.props.curentDate }) : _react2.default.createElement(_BoxWeek2.default, { trainers: this.props.trainers, date: this.props.date, curentDate: this.props.curentDate, events: this.props.events, clickFunction: this.props.clickFunction })
+            );
+        }
+    }]);
+
+    return RowWeek;
+}(_react2.default.Component);
+
+exports.default = RowWeek;
+
+/***/ }),
+/* 469 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(2);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactDom = __webpack_require__(28);
+
+var _reactLightningDesignSystem = __webpack_require__(42);
+
+var _Event = __webpack_require__(281);
+
+var _Event2 = _interopRequireDefault(_Event);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var BoxWeek = function (_React$Component) {
+    _inherits(BoxWeek, _React$Component);
+
+    function BoxWeek() {
+        _classCallCheck(this, BoxWeek);
+
+        return _possibleConstructorReturn(this, (BoxWeek.__proto__ || Object.getPrototypeOf(BoxWeek)).apply(this, arguments));
+    }
+
+    _createClass(BoxWeek, [{
+        key: 'render',
+        value: function render() {
+            var _this2 = this;
+
+            var classes = this.props.date.getMonth() == this.props.curentDate.getMonth() ? "" : "inactiveMonth";
+            classes = this.props.curentDate.toLocString() == this.props.date.toLocString() ? "curentDate" : classes;
+            if (this.props.text) return _react2.default.createElement(
+                _reactLightningDesignSystem.TableRowColumn,
+                { className: "boxDayName " + classes },
+                this.props.text + ' ' + this.props.date.toLocString('beauty')
+            );
+            return _react2.default.createElement(
+                _reactLightningDesignSystem.TableRowColumn,
+                { className: "box " + classes },
+                _react2.default.createElement(
+                    'div',
+                    { className: 'day' },
+                    _react2.default.createElement(
+                        'span',
+                        null,
+                        this.props.date.getDate()
+                    )
+                ),
+                this.props.events.map(function (e, i) {
+                    var start = new Date(e.start);
+                    var finish = new Date(e.start);finish.setMilliseconds(e.duration);
+                    if (start.toLocString() <= _this2.props.date.toLocString() && _this2.props.date.toLocString() <= finish.toLocString()) {
+                        var length = Math.min(Math.ceil((finish - _this2.props.date) / 86400000), 7 - _this2.props.date.getDay());
+                        var ww = 0;
+                        var borderClass = '';
+                        if (_this2.props.date.toLocString() != start.toLocString()) {
+                            borderClass += 'left ';
+                            ww += 8;
+                        }
+                        if (_this2.props.date.toLocString() != finish.toLocString()) {
+                            borderClass += 'right';
+                            ww += 8;
+                        }
+                        var w = 'calc(100% + ' + ww + 'px)';
+                        return _react2.default.createElement(_Event2.default, { 'class': borderClass, width: w, mt: '10px', trainers: _this2.props.trainers, event: e, key: i, clickFunction: _this2.props.clickFunction });
+                    }
+                })
+            );
+        }
+    }]);
+
+    return BoxWeek;
+}(_react2.default.Component);
+
+exports.default = BoxWeek;
+
+/***/ }),
+/* 470 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(2);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactDom = __webpack_require__(28);
+
+var _reactLightningDesignSystem = __webpack_require__(42);
+
+var _Event = __webpack_require__(281);
+
+var _Event2 = _interopRequireDefault(_Event);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Box = function (_React$Component) {
+    _inherits(Box, _React$Component);
+
+    function Box() {
+        _classCallCheck(this, Box);
+
+        return _possibleConstructorReturn(this, (Box.__proto__ || Object.getPrototypeOf(Box)).apply(this, arguments));
+    }
+
+    _createClass(Box, [{
+        key: 'render',
+        value: function render() {
+            var _this2 = this;
+
+            var classes = this.props.date.getMonth() == this.props.curentDate.getMonth() ? "box" : "box inactiveMonth";
+            classes = this.props.curentDate.toLocString() == this.props.date.toLocString() ? "box curentDate" : classes;
+            var line = -1;
+            for (var i = 0; i < this.props.lines.length; i++) {
+                this.props.lines[i]--;
+            }
+            return _react2.default.createElement(
+                _reactLightningDesignSystem.TableRowColumn,
+                { className: classes },
+                _react2.default.createElement(
+                    'div',
+                    { className: 'day' },
+                    _react2.default.createElement(
+                        'span',
+                        null,
+                        this.props.date.getDate()
+                    )
+                ),
+                this.props.events.map(function (e, i) {
+                    if (e.multiStart.reduce(function (pv, cv) {
+                        return pv || cv.toLocString() == _this2.props.date.toLocString();
+                    }, false)) {
+                        line++;
+                        var d = new Date(e.start);d.setMilliseconds(e.duration);
+                        var length = Math.min(Math.ceil((d - _this2.props.date) / 86400000), 7 - _this2.props.date.getDay());
+                        var w = length * 100 + '%';
+                        var ww = (length - 1) * 17;
+                        var borderClass = '';
+                        if (_this2.props.date.toLocString() != e.multiStart[0].toLocString()) {
+                            borderClass += 'left ';
+                            ww += 8;
+                        }
+                        if (_this2.props.date.toLocString() != e.multiStart[e.multiStart.length - 1].toLocString()) {
+                            borderClass += 'right';
+                            ww += 8;
+                        }
+
+                        w = 'calc(' + w + ' + ' + ww + 'px)';
+                        var mt = 10;
+                        while (_this2.props.lines[line] > 0) {
+                            line++;
+                            mt += 29;
+                        }
+                        _this2.props.lines[line] = Math.ceil((d - _this2.props.date) / 86400000);
+                        _this2.props.lines.map(function (x) {
+                            return x > 0 ? x - 1 : 0;
+                        });
+                        return _react2.default.createElement(_Event2.default, { 'class': borderClass, width: w, mt: mt + 'px', trainers: _this2.props.trainers, event: e, key: i, clickFunction: _this2.props.clickFunction });
+                    }
+                })
+            );
+        }
+    }]);
+
+    return Box;
+}(_react2.default.Component);
+
+exports.default = Box;
+
+/***/ }),
+/* 471 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(2);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactDom = __webpack_require__(28);
+
+var _reactLightningDesignSystem = __webpack_require__(42);
+
+var _BoxMonth = __webpack_require__(470);
+
+var _BoxMonth2 = _interopRequireDefault(_BoxMonth);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Row = function (_React$Component) {
+    _inherits(Row, _React$Component);
+
+    function Row() {
+        _classCallCheck(this, Row);
+
+        return _possibleConstructorReturn(this, (Row.__proto__ || Object.getPrototypeOf(Row)).apply(this, arguments));
+    }
+
+    _createClass(Row, [{
+        key: 'render',
+        value: function render() {
+            var _this2 = this;
+
+            this.lines = Array.from({ length: 10 }).fill(0);
+            return _react2.default.createElement(
+                _reactLightningDesignSystem.TableRow,
+                { className: 'row' },
+                [].concat(_toConsumableArray(Array(7))).map(function (e, i) {
+                    var x = new Date(_this2.props.date);
+                    x.setDate(x.getDate() + i);
+                    return _react2.default.createElement(_BoxMonth2.default, { lines: _this2.lines, key: i, trainers: _this2.props.trainers, date: x, curentDate: _this2.props.curentDate, events: _this2.props.events, clickFunction: _this2.props.clickFunction });
+                })
+            );
+        }
+    }]);
+
+    return Row;
+}(_react2.default.Component);
+
+exports.default = Row;
 
 /***/ })
 /******/ ]);

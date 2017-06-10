@@ -50,8 +50,11 @@ render(
     document.querySelector('#root')
 );
 
-Date.prototype.toLocString = function() {
-    return `${this.getFullYear()}.${this.getMonth()+1}.${this.getDate()}`;
+Date.prototype.toLocString = function(type) {
+    let n = this.getFullYear()*10000+(this.getMonth()+1)*100+this.getDate();
+    if (type=="beauty") return String(n).substr(6,2)+'/'+String(n).substr(4,2)+'/'+String(n).substr(0,4);
+    if (type=="string") return String(n);
+    return n;
 }
 
 fetch('http://128.199.53.150/events').catch((err) => localData())

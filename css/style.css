@@ -33,10 +33,6 @@ th {
     width: 100%;
 }
 
-.row {
-    min-height: 85px;
-}
-
 .box {
     display: inline-block;
     overflow: visible;
@@ -45,6 +41,20 @@ th {
     cursor: default;
     border-right: 1px solid #d8dde6;
     flex-grow: 1;
+}
+
+tbody .box {
+    min-height: 85px;
+}
+
+.boxDayName {
+    display: inline-block;
+    width: 100%;
+    cursor: default;
+    border-right: 1px solid #d8dde6;
+    border-left: 1px solid #d8dde6;
+    border-top: 1px solid #3174ad !important;
+    text-align: center;
 }
 
 .box:first-child {
@@ -198,4 +208,10 @@ th {
     border: 1px solid #d8dde6;
     border-radius: 0.25rem;
     box-shadow: 0 0 3px #d8dde6;
+}
+
+.btn-active {
+    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    background-color: #e6e6e6;
+    border-color: #adadad;
 }

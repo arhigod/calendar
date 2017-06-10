@@ -1,9 +1,10 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { ButtonGroup, DateInput, Button, Table, TableHeader, TableRow, TableHeaderColumn, TableBody } from 'react-lightning-design-system';
+import { ButtonGroup, DateInput, Button } from 'react-lightning-design-system';
 
-import Row from './Row';
 import MyModal from './MyModal';
+import TableWeek from './TableWeek';
+import TableMonth from './TableMonth';
 
 export default class App extends React.Component {
     constructor(props) {
@@ -12,6 +13,7 @@ export default class App extends React.Component {
             date: new Date(),
             curentDate: new Date(),
             showModal: false,
+            view: 'month',
         };
         this.state.date.setHours(0, 0, 0, 0);
         this.state.curentDate.setHours(0, 0, 0, 0);
@@ -23,11 +25,12 @@ export default class App extends React.Component {
         this.dateChange = this.dateChange.bind(this);
         this.handleClick = this.handleClick.bind(this);
         this.closeClick = this.closeClick.bind(this);
+        this.changeView = this.changeView.bind(this);
     }
 
     dateChange(date) {
         let d = new Date(date);
-        d.setDate(1);
+        if (this.state.view=="month") d.setDate(1);
         d.setHours(0, 0, 0, 0);
         while (d.getDay() > 0) {
             d.setDate(d.getDate() - 1);
@@ -58,57 +61,58 @@ export default class App extends React.Component {
         });
     }
 
+    changeView(view) {
+        this.state.view = view;
+        this.dateChange(this.state.curentDate);
+    }
+
     shouldComponentUpdate(nextProps, nextState) {
         if (this.state.showModal != nextState.showModal) return true;
-        if (this.state.curentDate.toLocString() == nextState.curentDate.toLocString()) return false;
+        if (this.state.view != nextState.view) return true;
+        //if (this.state.curentDate.toLocString() == nextState.curentDate.toLocString()) return false;
         return true;
     }
 
     render() {
-        let c = (new Date(this.state.date));
-        c.setDate(this.state.date.getDate() + 7 * 5);
-        c = c.getMonth() == this.state.curentDate.getMonth() ? 6 : 5;
         return (
-            <div className="wrapper" onClick={(e)=>this.handleClick(e)} >
+            <div className="wrapper" onClick={(e)=>this.handleClick(e)} >                
                 <div className="dateInput">
+                    <ButtonGroup className="buttons">
+                        <Button type="neutral" className={this.state.view == "month" ? "btn-active" : ""} onClick={()=>this.changeView('month')}>
+                            month
+                        </Button>                
+                        <Button type="neutral" className={this.state.view == "week" ? "btn-active" : ""} onClick={()=>this.changeView('week')}>
+                            week
+                        </Button>
+                    </ButtonGroup>
                     <ButtonGroup className="buttons">
                         <Button type="icon-border" icon="left" onClick={()=>{
                             let d = new Date(this.state.curentDate);
-                            d.setDate(0);
-                            this.dateChange(d.setDate(1))}
+                            if (this.state.view == "month") {
+                                d.setMonth(d.getMonth()-1);
+                            } else {
+                                d.setDate(d.getDate()-7);
+                            }
+                            this.dateChange(d)}
                         } />
                         <Button type="icon-border" icon="home" onClick={()=>this.dateChange(new Date())}/>
                         <Button type="icon-border" icon="right" onClick={()=>{
                             let d = new Date(this.state.curentDate);
-                            d.setDate(32);
-                            return this.dateChange(d.setDate(1))}
+                            if (this.state.view == "month") {
+                                d.setMonth(d.getMonth()+1);
+                            } else {
+                                d.setDate(d.getDate()+7);
+                            }
+                            this.dateChange(d)}
                         } />
                     </ButtonGroup>
-                    <DateInput readOnly className="dateLabel" value={this.state.curentDate.toLocString()} dateFormat="DD/MM/YYYY" onValueChange={(x)=>this.dateChange(x)} />
+                    <DateInput readOnly className="dateLabel" value={this.state.curentDate.toLocString('string')} dateFormat="DD/MM/YYYY" onValueChange={(x)=>this.dateChange(x)} />
                 </div>
-                <Table bordered noRowHover className="app">
-                   <TableHeader>
-                        <TableRow className="row">
-                        {
-                            ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((e,i) =>
-                                <TableHeaderColumn className="box" key={i}>
-                                    {e}
-                                </TableHeaderColumn>
-                            )
-                        }
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                    {
-                        [...Array(c)].map((e,i)=> {
-                            let x = new Date(this.state.date);
-                            x.setDate(x.getDate()+7*i);
-                            return <Row key={i} date={x} curentDate={this.state.curentDate} trainers={this.props.trainers} events={this.props.events} clickFunction={(e,ev)=>this.handleClick(e,ev)} />;
-                            }
-                        )
-                    }
-                    </TableBody>
-                </Table>
+                {
+                    this.state.view == 'month' ?
+                    <TableMonth trainers={this.props.trainers} events={this.props.events} date={this.state.date} curentDate={this.state.curentDate} handleClick={(e,ev)=>this.handleClick(e,ev)} /> :
+                    <TableWeek trainers={this.props.trainers} events={this.props.events} date={this.state.date} curentDate={this.state.curentDate} handleClick={(e,ev)=>this.handleClick(e,ev)} />
+                }                
                 {
                     this.state.showModal ?
                     <MyModal closef={() => this.closeClick()} trainers={this.props.trainers} event={this.state.event} /> :
