@@ -46,8 +46,7 @@ export default class App extends React.Component {
                 startSwipeModalPos = parseInt(document.querySelector('.slds-modal__container').style.transform.substr(11)) || 0;
             }
         });
-        document.addEventListener('touchmove', e => {
-            console.log(mouseDown && Math.abs(e.changedTouches[0].pageY-startSwipeY) < 50 && (modalMove || Math.abs(startSwipeModalPos - startSwipeX + e.changedTouches[0].pageX) > 50),Math.abs(e.changedTouches[0].pageY-startSwipeY),Math.abs(startSwipeModalPos - startSwipeX + e.changedTouches[0].pageX))
+        document.addEventListener('touchmove', e => {        
             if (mouseDown && Math.abs(e.changedTouches[0].pageY-startSwipeY) < 50 && (modalMove || Math.abs(startSwipeModalPos - startSwipeX + e.changedTouches[0].pageX) > 50)) {
                 modalMove = true;
                 document.querySelector('.slds-modal__container').style.transform = `translateX(${startSwipeModalPos - startSwipeX + e.changedTouches[0].pageX}px)`;
