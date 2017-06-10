@@ -47,11 +47,11 @@ export default class App extends React.Component {
             }
         });
         document.addEventListener('touchmove', e => {        
-            if (mouseDown && Math.abs(e.changedTouches[0].pageY-startSwipeY) < 50 && (modalMove || Math.abs(startSwipeModalPos - startSwipeX + e.changedTouches[0].pageX) > 50)) {
+            if (mouseDown && Math.abs(e.changedTouches[0].pageY-startSwipeY) < 100 && (modalMove || Math.abs(startSwipeModalPos - startSwipeX + e.changedTouches[0].pageX) > 50)) {
                 modalMove = true;
                 document.querySelector('.slds-modal__container').style.transform = `translateX(${startSwipeModalPos - startSwipeX + e.changedTouches[0].pageX}px)`;
             }
-            if (Math.abs(e.changedTouches[0].pageY-startSwipeY) >= 50) {
+            if (Math.abs(e.changedTouches[0].pageY-startSwipeY) >= 100) {
                 modalMove = false;
                 document.querySelector('.slds-modal__container').style.transform = `translateX(0px)`;
             }
