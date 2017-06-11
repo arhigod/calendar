@@ -35273,9 +35273,10 @@ var App = function (_React$Component) {
         while (_this.state.date.getDay() > 0) {
             _this.state.date.setDate(_this.state.date.getDate() - 1);
         }
-        _this.modalSwipe();
+        _this.swipe();
 
         _this.dateChange = _this.dateChange.bind(_this);
+        _this.pageChange = _this.pageChange.bind(_this);
         _this.handleClick = _this.handleClick.bind(_this);
         _this.closeClick = _this.closeClick.bind(_this);
         _this.changeView = _this.changeView.bind(_this);
@@ -35283,14 +35284,14 @@ var App = function (_React$Component) {
     }
 
     _createClass(App, [{
-        key: 'modalSwipe',
-        value: function modalSwipe() {
+        key: 'swipe',
+        value: function swipe() {
             var _this2 = this;
 
             var mouseDown = false;
             var startSwipeX = 0;
             var startSwipeY = 0;
-            var startSwipeModalPos = 0;
+            var startSwipePos = 0;
             var modalMove = false;
             document.addEventListener('touchstart', function (e) {
                 if (_this2.state.showModal) {
@@ -35299,21 +35300,24 @@ var App = function (_React$Component) {
                     modalMove = false;
                     startSwipeX = e.changedTouches[0].pageX;
                     startSwipeY = e.changedTouches[0].pageY;
-                    startSwipeModalPos = parseInt(document.querySelector('.slds-modal__container').style.transform.substr(11)) || 0;
+                    startSwipePos = parseInt(document.querySelector('.slds-modal__container').style.transform.substr(11)) || 0;
+                } else {
+                    mouseDown = true;
+                    startSwipeX = e.changedTouches[0].pageX;
                 }
             });
             document.addEventListener('touchmove', function (e) {
-                if (mouseDown && Math.abs(e.changedTouches[0].pageY - startSwipeY) < 100 && (modalMove || Math.abs(startSwipeModalPos - startSwipeX + e.changedTouches[0].pageX) > 50)) {
+                if (_this2.state.showModal && mouseDown && Math.abs(e.changedTouches[0].pageY - startSwipeY) < 100 && (modalMove || Math.abs(startSwipePos - startSwipeX + e.changedTouches[0].pageX) > 50)) {
                     modalMove = true;
-                    document.querySelector('.slds-modal__container').style.transform = 'translateX(' + (startSwipeModalPos - startSwipeX + e.changedTouches[0].pageX) + 'px)';
+                    document.querySelector('.slds-modal__container').style.transform = 'translateX(' + (startSwipePos - startSwipeX + e.changedTouches[0].pageX) + 'px)';
                 }
-                if (Math.abs(e.changedTouches[0].pageY - startSwipeY) >= 100) {
+                if (_this2.state.showModal && Math.abs(e.changedTouches[0].pageY - startSwipeY) >= 100) {
                     modalMove = false;
                     document.querySelector('.slds-modal__container').style.transform = 'translateX(0px)';
                 }
             });
             document.addEventListener('touchend', function (e) {
-                if (mouseDown && modalMove) {
+                if (_this2.state.showModal && mouseDown && modalMove) {
                     document.querySelector('.slds-modal__container').style['transition-duration'] = '1s';
                     mouseDown = false;
                     if (startSwipeX - e.changedTouches[0].pageX < -125) {
@@ -35324,6 +35328,14 @@ var App = function (_React$Component) {
                         document.querySelector('.slds-modal__container').style.transform = 'translateX(0px)';
                     }
                 };
+                if (!_this2.state.showModal && mouseDown) {
+                    mouseDown = false;
+                    if (startSwipeX - e.changedTouches[0].pageX < -150) {
+                        _this2.pageChange('left');
+                    } else if (startSwipeX - e.changedTouches[0].pageX > 150) {
+                        _this2.pageChange('right');
+                    }
+                }
             });
         }
     }, {
@@ -35341,6 +35353,28 @@ var App = function (_React$Component) {
                 curentDate: dd,
                 date: d
             });
+        }
+    }, {
+        key: 'pageChange',
+        value: function pageChange(direction) {
+            if (direction == "left") {
+                var d = new Date(this.state.curentDate);
+                if (this.state.view == "month") {
+                    d.setMonth(d.getMonth() - 1);
+                } else {
+                    d.setDate(d.getDate() - 7);
+                }
+                this.dateChange(d);
+            }
+            if (direction == "right") {
+                var _d = new Date(this.state.curentDate);
+                if (this.state.view == "month") {
+                    _d.setMonth(_d.getMonth() + 1);
+                } else {
+                    _d.setDate(_d.getDate() + 7);
+                }
+                this.dateChange(_d);
+            }
         }
     }, {
         key: 'handleClick',
@@ -35367,14 +35401,6 @@ var App = function (_React$Component) {
         value: function changeView(view) {
             this.state.view = view;
             this.dateChange(this.state.curentDate);
-        }
-    }, {
-        key: 'shouldComponentUpdate',
-        value: function shouldComponentUpdate(nextProps, nextState) {
-            if (this.state.showModal != nextState.showModal) return true;
-            if (this.state.view != nextState.view) return true;
-            //if (this.state.curentDate.toLocString() == nextState.curentDate.toLocString()) return false;
-            return true;
         }
     }, {
         key: 'render',
@@ -35411,25 +35437,13 @@ var App = function (_React$Component) {
                         _reactLightningDesignSystem.ButtonGroup,
                         { className: 'buttons' },
                         _react2.default.createElement(_reactLightningDesignSystem.Button, { type: 'icon-border', icon: 'left', onClick: function onClick() {
-                                var d = new Date(_this3.state.curentDate);
-                                if (_this3.state.view == "month") {
-                                    d.setMonth(d.getMonth() - 1);
-                                } else {
-                                    d.setDate(d.getDate() - 7);
-                                }
-                                _this3.dateChange(d);
+                                return _this3.pageChange('left');
                             } }),
                         _react2.default.createElement(_reactLightningDesignSystem.Button, { type: 'icon-border', icon: 'home', onClick: function onClick() {
                                 return _this3.dateChange(new Date());
                             } }),
                         _react2.default.createElement(_reactLightningDesignSystem.Button, { type: 'icon-border', icon: 'right', onClick: function onClick() {
-                                var d = new Date(_this3.state.curentDate);
-                                if (_this3.state.view == "month") {
-                                    d.setMonth(d.getMonth() + 1);
-                                } else {
-                                    d.setDate(d.getDate() + 7);
-                                }
-                                _this3.dateChange(d);
+                                return _this3.pageChange('right');
                             } })
                     ),
                     _react2.default.createElement(_reactLightningDesignSystem.DateInput, { readOnly: true, className: 'dateLabel', value: this.state.curentDate.toLocString('string'), dateFormat: 'DD/MM/YYYY', onValueChange: function onValueChange(x) {

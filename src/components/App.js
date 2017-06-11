@@ -22,19 +22,20 @@ export default class App extends React.Component {
         while (this.state.date.getDay() > 0) {
             this.state.date.setDate(this.state.date.getDate() - 1);
         }
-        this.modalSwipe();
+        this.swipe();
 
         this.dateChange = this.dateChange.bind(this);
+        this.pageChange = this.pageChange.bind(this);
         this.handleClick = this.handleClick.bind(this);
         this.closeClick = this.closeClick.bind(this);
         this.changeView = this.changeView.bind(this);
     }
 
-    modalSwipe() {
+    swipe() {
         let mouseDown = false;
         let startSwipeX = 0;
         let startSwipeY = 0;
-        let startSwipeModalPos = 0;
+        let startSwipePos = 0;
         let modalMove = false;
         document.addEventListener('touchstart', e => {
             if (this.state.showModal) {
@@ -43,21 +44,24 @@ export default class App extends React.Component {
                 modalMove = false;
                 startSwipeX = e.changedTouches[0].pageX;
                 startSwipeY = e.changedTouches[0].pageY;
-                startSwipeModalPos = parseInt(document.querySelector('.slds-modal__container').style.transform.substr(11)) || 0;
+                startSwipePos = parseInt(document.querySelector('.slds-modal__container').style.transform.substr(11)) || 0;
+            } else {
+                mouseDown = true;
+                startSwipeX = e.changedTouches[0].pageX;
             }
         });
         document.addEventListener('touchmove', e => {        
-            if (mouseDown && Math.abs(e.changedTouches[0].pageY-startSwipeY) < 100 && (modalMove || Math.abs(startSwipeModalPos - startSwipeX + e.changedTouches[0].pageX) > 50)) {
+            if (this.state.showModal && mouseDown && Math.abs(e.changedTouches[0].pageY-startSwipeY) < 100 && (modalMove || Math.abs(startSwipePos - startSwipeX + e.changedTouches[0].pageX) > 50)) {
                 modalMove = true;
-                document.querySelector('.slds-modal__container').style.transform = `translateX(${startSwipeModalPos - startSwipeX + e.changedTouches[0].pageX}px)`;
+                document.querySelector('.slds-modal__container').style.transform = `translateX(${startSwipePos - startSwipeX + e.changedTouches[0].pageX}px)`;
             }
-            if (Math.abs(e.changedTouches[0].pageY-startSwipeY) >= 100) {
+            if (this.state.showModal && Math.abs(e.changedTouches[0].pageY-startSwipeY) >= 100) {
                 modalMove = false;
                 document.querySelector('.slds-modal__container').style.transform = `translateX(0px)`;
             }
         });
         document.addEventListener('touchend', e => {
-            if (mouseDown && modalMove) {
+            if (this.state.showModal && mouseDown && modalMove) {
                 document.querySelector('.slds-modal__container').style['transition-duration'] = '1s';
                 mouseDown = false;
                 if (startSwipeX - e.changedTouches[0].pageX < -125) {
@@ -68,6 +72,14 @@ export default class App extends React.Component {
                     document.querySelector('.slds-modal__container').style.transform = `translateX(0px)`;
                 }
             };
+            if (!this.state.showModal && mouseDown) {
+                mouseDown = false;
+                if (startSwipeX - e.changedTouches[0].pageX < -150) {
+                    this.pageChange('left');
+                } else if (startSwipeX - e.changedTouches[0].pageX > 150) {
+                    this.pageChange('right');
+                }
+            }
         });
     }
 
@@ -84,6 +96,27 @@ export default class App extends React.Component {
             curentDate: dd,
             date: d,
         });
+    }
+
+    pageChange(direction) {
+        if (direction == "left") {
+            let d = new Date(this.state.curentDate);
+            if (this.state.view == "month") {
+                d.setMonth(d.getMonth()-1);
+            } else {
+                d.setDate(d.getDate()-7);
+            }
+            this.dateChange(d);
+        }        
+        if (direction == "right") {
+            let d = new Date(this.state.curentDate);
+            if (this.state.view == "month") {
+                d.setMonth(d.getMonth()+1);
+            } else {
+                d.setDate(d.getDate()+7);
+            }
+            this.dateChange(d);
+        }
     }
 
     handleClick(e, event) {
@@ -109,13 +142,6 @@ export default class App extends React.Component {
         this.dateChange(this.state.curentDate);
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        if (this.state.showModal != nextState.showModal) return true;
-        if (this.state.view != nextState.view) return true;
-        //if (this.state.curentDate.toLocString() == nextState.curentDate.toLocString()) return false;
-        return true;
-    }
-
     render() {
         return (
             <div className="wrapper" onClick={(e)=>this.handleClick(e)} >                
@@ -129,25 +155,9 @@ export default class App extends React.Component {
                         </Button>
                     </ButtonGroup>
                     <ButtonGroup className="buttons">
-                        <Button type="icon-border" icon="left" onClick={()=>{
-                            let d = new Date(this.state.curentDate);
-                            if (this.state.view == "month") {
-                                d.setMonth(d.getMonth()-1);
-                            } else {
-                                d.setDate(d.getDate()-7);
-                            }
-                            this.dateChange(d)}
-                        } />
+                        <Button type="icon-border" icon="left" onClick={()=>this.pageChange('left')} />
                         <Button type="icon-border" icon="home" onClick={()=>this.dateChange(new Date())}/>
-                        <Button type="icon-border" icon="right" onClick={()=>{
-                            let d = new Date(this.state.curentDate);
-                            if (this.state.view == "month") {
-                                d.setMonth(d.getMonth()+1);
-                            } else {
-                                d.setDate(d.getDate()+7);
-                            }
-                            this.dateChange(d)}
-                        } />
+                        <Button type="icon-border" icon="right" onClick={()=>this.pageChange('right')} />
                     </ButtonGroup>
                     <DateInput readOnly className="dateLabel" value={this.state.curentDate.toLocString('string')} dateFormat="DD/MM/YYYY" onValueChange={(x)=>this.dateChange(x)} />
                 </div>
