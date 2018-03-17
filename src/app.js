@@ -25,7 +25,9 @@ let localData = function() {
     console.log('ooops');
     let events = require('./../events.json');
     let trainers = require('./../trainers.json');
+    let deltaTime = new Date() - 1491310284000;
     events.map(e => {
+    	e.start = +new Date(e.start) + deltaTime;
         e.multiStart = [new Date(e.start)];
         let d = new Date(e.start);
         d.setMilliseconds(e.duration);
